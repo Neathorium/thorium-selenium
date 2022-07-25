@@ -1,5 +1,7 @@
 package com.neathorium.thorium.framework.selenium.constants;
 
+import com.neathorium.thorium.core.data.constants.CoreDataConstants;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.enums.SeleniumTypeKey;
 import com.neathorium.thorium.framework.selenium.namespaces.element.validators.ElementGetterValidators;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
@@ -7,11 +9,9 @@ import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.W
 import com.neathorium.thorium.framework.selenium.namespaces.factories.DriverFunctionFactory;
 import com.neathorium.thorium.framework.selenium.records.GetElementByData;
 import com.neathorium.thorium.framework.selenium.records.SeleniumTypedEnumKeyData;
-import com.neathorium.thorium.core.constants.CoreDataConstants;
-import com.neathorium.thorium.core.extensions.boilers.StringSet;
-import com.neathorium.thorium.core.namespaces.StringUtilities;
-import com.neathorium.thorium.core.records.Data;
 import com.neathorium.thorium.framework.core.namespaces.validators.FrameworkCoreFormatter;
+import com.neathorium.thorium.java.extensions.classes.boilers.StringSet;
+import com.neathorium.thorium.java.extensions.namespaces.utilities.StringUtilities;
 import org.openqa.selenium.WebElement;
 
 import java.util.Collections;
@@ -27,7 +27,7 @@ public abstract class DriverFunctionConstants {
     public static final DriverFunction<Boolean> NULL_BOOLEAN = DriverFunctionFactory.get(CoreDataConstants.NULL_BOOLEAN);
     public static final DriverFunction<String> NULL_STRING = DriverFunctionFactory.get(CoreDataConstants.NULL_STRING);
     public static final DriverFunction<Integer> NULL_INTEGER = DriverFunctionFactory.get(CoreDataConstants.NULL_INTEGER);
-    public static final DriverFunction<StringSet> NULL_STRINGSET = DriverFunctionFactory.get(CoreDataConstants.NULL_STRING_SET);
+    public static final DriverFunction<StringSet> NULL_STRINGSET = DriverFunctionFactory.get(SeleniumDataConstants.NULL_STRING_SET_DATA);
     public static final DriverFunction<Boolean> LAZY_ELEMENT_WAIT_PARAMETERS_WERE_NULL = DriverFunctionFactory.get(SeleniumDataConstants.LAZY_ELEMENT_WAIT_PARAMETERS_WERE_NULL);
     public static final DriverFunction<Boolean> LAZY_ELEMENT_WAS_NULL = DriverFunctionFactory.get(SeleniumDataConstants.LAZY_ELEMENT_WAS_NULL);
     public static final DriverFunction<WebElement> NULL_WEBELEMENT = DriverFunctionFactory.get(SeleniumDataConstants.NULL_ELEMENT);
@@ -67,11 +67,11 @@ public abstract class DriverFunctionConstants {
     );
 
     private static WebElement getByIndex(Data<WebElementList> data, int index) {
-        return data.object.get(index);
+        return data.OBJECT().get(index);
     }
 
     private static WebElement getByContainedText(Data<WebElementList> data, String text) {
-        final var list = data.object;
+        final var list = data.OBJECT();
         final var size = list.size();
         var object = SeleniumCoreConstants.STOCK_ELEMENT;
         var index = 0;

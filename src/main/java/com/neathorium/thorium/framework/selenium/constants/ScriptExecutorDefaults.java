@@ -12,9 +12,9 @@ import com.neathorium.thorium.framework.selenium.records.scripter.ParameterizedE
 import com.neathorium.thorium.framework.selenium.records.scripter.ParametersFieldDefaultsData;
 import com.neathorium.thorium.framework.selenium.records.scripter.RegularExecutorData;
 import com.neathorium.thorium.core.constants.CastDataConstants;
-import com.neathorium.thorium.core.extensions.namespaces.predicates.AmountPredicates;
 import com.neathorium.thorium.core.namespaces.ExceptionHandlers;
 import com.neathorium.thorium.core.records.HandleResultData;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.AmountPredicates;
 import org.openqa.selenium.JavascriptExecutor;
 
 public abstract class ScriptExecutorDefaults {

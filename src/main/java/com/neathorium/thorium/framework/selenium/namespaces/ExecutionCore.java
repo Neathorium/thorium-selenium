@@ -1,22 +1,20 @@
 package com.neathorium.thorium.framework.selenium.namespaces;
 
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.constants.DriverFunctionConstants;
 import com.neathorium.thorium.framework.selenium.constants.validators.SeleniumFormatterConstants;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.factories.DriverFunctionFactory;
-import com.neathorium.thorium.core.extensions.DecoratedList;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
 import com.neathorium.thorium.core.namespaces.DataExecutionFunctions;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.java.extensions.classes.DecoratedList;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import org.openqa.selenium.WebDriver;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static com.neathorium.thorium.core.extensions.namespaces.NullableFunctions.isNotNull;
 import static com.neathorium.thorium.core.namespaces.DataExecutionFunctions.ifDependency;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -34,7 +32,7 @@ public interface ExecutionCore {
     }
 
     private static <T> Data<T> ifDriverAnyWrappedCore(WebDriver driver, String nameof, DriverFunction<T> function) {
-        return isNotNull(driver) ? (
+        return NullablePredicates.isNotNull(driver) ? (
             DataExecutionFunctions.ifDependencyAnyCore(nameof, function.apply(driver))
         ) : DataFactoryFunctions.getInvalidWith(null, nameof, SeleniumFormatterConstants.DRIVER_WAS_NULL);
     }
@@ -45,18 +43,18 @@ public interface ExecutionCore {
 
     static <T> DriverFunction<T> ifDriver(String nameof, boolean condition, DriverFunction<T> positive, Data<T> negative) {
         final var lNameof = isBlank(nameof) ? "ifDriver" : nameof;
-        return condition && isNotNull(positive) ? (
+        return condition && NullablePredicates.isNotNull(positive) ? (
             DriverFunctionFactory.getFunction(ifDriverAnyWrappedCore(lNameof, positive))
         ) : DriverFunctionFactory.get(DataExecutionFunctions.ifDependencyAnyCore(lNameof, negative));
     }
 
     static <T> DriverFunction<T> ifDriver(String nameof, DriverFunction<T> positive, Data<T> negative) {
-        return DriverFunctionFactory.getFunction(DataExecutionFunctions.ifDependency(nameof, CoreUtilities.areNotNull(positive, negative), positive, negative));
+        return DriverFunctionFactory.getFunction(DataExecutionFunctions.ifDependency(nameof, NullablePredicates.areNotNull(positive, negative), positive, negative));
     }
 
     static <T> DriverFunction<T> ifDriver(String nameof, boolean condition, DriverFunction<T> positive, DriverFunction<T> negative) {
         final var lNameof = isBlank(nameof) ? "ifDriver" : nameof;
-        final var function = condition && isNotNull(positive) ? positive : negative;
+        final var function = condition && NullablePredicates.isNotNull(positive) ? positive : negative;
         return DriverFunctionFactory.getFunction(ifDriverAnyWrappedCore(lNameof, function));
     }
 
@@ -65,29 +63,29 @@ public interface ExecutionCore {
     }
 
     static <T, U> DriverFunction<U> ifDriver(String nameof, String errorMessage, DriverFunction<T> function, Function<Data<T>, Data<U>> positive, Data<U> negative) {
-        return DriverFunctionFactory.getFunction(ifDependency(nameof, isBlank(errorMessage) && CoreUtilities.areNotNull(function, positive, negative), DriverFunctionFactory.getFunction(function.andThen(positive)), DataFactoryFunctions.replaceMessage(negative, nameof, errorMessage)));
+        return DriverFunctionFactory.getFunction(ifDependency(nameof, isBlank(errorMessage) && NullablePredicates.areNotNull(function, positive, negative), DriverFunctionFactory.getFunction(function.andThen(positive)), DataFactoryFunctions.replaceMessage(negative, nameof, errorMessage)));
     }
 
     static <T, U> DriverFunction<T> ifDriverGuardData(String nameof, Predicate<Data<U>> guard, Function<WebDriver, Data<U>> function, Function<Data<U>, Data<T>> positive, Data<T> negative) {
-        return DriverFunctionFactory.getFunction(ifDependency(nameof, CoreUtilities.areNotNull(guard, function, positive, negative), DataExecutionFunctions.conditionalChain(guard, function, positive, negative), negative));
+        return DriverFunctionFactory.getFunction(ifDependency(nameof, NullablePredicates.areNotNull(guard, function, positive, negative), DataExecutionFunctions.conditionalChain(guard, function, positive, negative), negative));
     }
 
     static <T, U> DriverFunction<T> ifDriverGuardData(String nameof, Function<WebDriver, Data<U>> function, Function<Data<U>, Data<T>> positive, Data<T> negative) {
-        return ifDriverGuardData(nameof, NullableFunctions::isNotNull, function, positive, negative);
+        return ifDriverGuardData(nameof, NullablePredicates::isNotNull, function, positive, negative);
     }
 
     static <T, U> DriverFunction<T> ifDriver(String nameof, boolean status, Function<WebDriver, Data<U>> function, Function<Data<U>, Data<T>> positive, Data<T> negative) {
-        return DriverFunctionFactory.getFunction(ifDependency(nameof, status && CoreUtilities.areNotNull(function, positive, negative), ifDriverGuardData(nameof, function, positive, negative), negative));
+        return DriverFunctionFactory.getFunction(ifDependency(nameof, status && NullablePredicates.areNotNull(function, positive, negative), ifDriverGuardData(nameof, function, positive, negative), negative));
     }
 
     static <T, U> DriverFunction<T> ifDriver(String nameof, Predicate<Data<U>> guard, DriverFunction<U> function, Function<Data<U>, Data<T>> positive, Data<T> negative) {
-        return DriverFunctionFactory.getFunction(ifDependency(nameof, CoreUtilities.areNotNull(guard, function, positive, negative), ifDriverGuardData(nameof, guard, function, positive, negative), negative));
+        return DriverFunctionFactory.getFunction(ifDependency(nameof, NullablePredicates.areNotNull(guard, function, positive, negative), ifDriverGuardData(nameof, guard, function, positive, negative), negative));
     }
 
     static <T, U> DriverFunction<U> ifDriverFunction(String nameof, Predicate<Data<?>> guard, DriverFunction<T> function, Function<Data<T>, DriverFunction<U>> positive, Data<U> negative) {
         return DriverFunctionFactory.getFunction(ifDependency(
             nameof,
-            CoreUtilities.areNotNull(guard, function, positive, negative),
+            NullablePredicates.areNotNull(guard, function, positive, negative),
             driver -> {
                 final var dep = function.apply(driver);
                 return guard.test(dep) ? positive.apply(dep).apply(driver) : negative;
@@ -97,7 +95,7 @@ public interface ExecutionCore {
     }
 
     static <T, U> Data<U> ifData(String nameof, Predicate<T> guard, T object, Function<T, Data<U>> positive, Data<U> negative) {
-        return DataFactoryFunctions.prependMessage((isNotNull(guard) && guard.test(object) ? positive.apply(object) : negative), nameof, "");
+        return DataFactoryFunctions.prependMessage((NullablePredicates.isNotNull(guard) && guard.test(object) ? positive.apply(object) : negative), nameof, "");
     }
 
     static <T, U> DriverFunction<T> ifDriver(
@@ -110,7 +108,7 @@ public interface ExecutionCore {
     ) {
         return DriverFunctionFactory.getFunction(ifDependency(
             nameof,
-            status && CoreUtilities.areNotNull(guard, function, positive),
+            status && NullablePredicates.areNotNull(guard, function, positive),
             DataExecutionFunctions.conditionalChain(guard, function, positive, negative),
             negative)
         );
@@ -126,7 +124,7 @@ public interface ExecutionCore {
     ) {
         return DriverFunctionFactory.getFunction(ifDependency(
             nameof,
-            status && CoreUtilities.areNotNull(guard, function, positive),
+            status && NullablePredicates.areNotNull(guard, function, positive),
             DataExecutionFunctions.conditionalChain(guard, function.get(), positive, negative),
             negative)
         );
@@ -136,7 +134,7 @@ public interface ExecutionCore {
         return DriverFunctionFactory.getFunction(
             ifDependency(
                 nameof,
-                isBlank(errorMessage) && CoreUtilities.areNotNull(guard, function, positive),
+                isBlank(errorMessage) && NullablePredicates.areNotNull(guard, function, positive),
                 DataExecutionFunctions.conditionalChain(guard, function, positive, negative),
                 DataFactoryFunctions.replaceMessage(negative, errorMessage)
             )
@@ -147,7 +145,7 @@ public interface ExecutionCore {
         return DriverFunctionFactory.getFunction(
             ifDependency(
                 nameof,
-                isBlank(errorMessage) && CoreUtilities.areNotNull(function, positive, negative),
+                isBlank(errorMessage) && NullablePredicates.areNotNull(function, positive, negative),
                 SeleniumExecutor.execute(function, positive),
                 negative
             )
@@ -168,7 +166,7 @@ public interface ExecutionCore {
     ) {
         return DriverFunctionFactory.getFunction(ifDependency(
             nameof,
-            status && CoreUtilities.areNotNull(guard, function, positive),
+            status && NullablePredicates.areNotNull(guard, function, positive),
             DataExecutionFunctions.conditionalChain(guard, function, positive, negative),
             negative)
         );

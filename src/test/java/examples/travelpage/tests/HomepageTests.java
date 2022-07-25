@@ -1,10 +1,10 @@
 package examples.travelpage.tests;
 
+import com.neathorium.thorium.core.data.namespaces.DataFunctions;
 import com.neathorium.thorium.framework.selenium.namespaces.DriverWaits;
 import com.neathorium.thorium.framework.selenium.namespaces.SeleniumExecutor;
 import com.neathorium.thorium.framework.selenium.namespaces.element.Element;
 import com.neathorium.thorium.framework.selenium.namespaces.element.ElementExpectedConditions;
-import com.neathorium.thorium.core.namespaces.DataFunctions;
 import examples.travelpage.constants.HomepageConstants;
 import examples.travelpage.namespaces.FFDriverFunctions;
 import org.junit.jupiter.api.AfterAll;
@@ -22,7 +22,7 @@ public class HomepageTests {
             /*Element.inputWhenClickable(HomepageConstants.DESTINATION_FIELD_COMPLEX, "XYZ"),
             DisplayedFunctions.isDisplayed(HomepageConstants.DESTINATION_FIELD_COMPLEX)*/
         ).apply(FFDriverFunctions.get());
-        Assertions.assertTrue(result.status, DataFunctions.getFormattedMessage(result));
+        Assertions.assertTrue(result.STATUS(), DataFunctions.getFormattedMessage(result));
     }
 
     @AfterAll

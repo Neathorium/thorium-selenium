@@ -1,18 +1,17 @@
 package com.neathorium.thorium.framework.selenium.namespaces.driver;
 
+import com.neathorium.thorium.core.data.constants.CoreDataConstants;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.scripter.injectable.Actions;
 import com.neathorium.thorium.framework.selenium.namespaces.scripter.injectable.Conditions;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
-import com.neathorium.thorium.core.constants.CoreDataConstants;
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
-import com.neathorium.thorium.core.records.Data;
 import com.neathorium.thorium.framework.core.namespaces.validators.FrameworkCoreFormatter;
 import com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore;
 
 import java.util.function.Function;
 
-import static com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore.ifDriver;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public interface DevtoolsDriver {

@@ -4,10 +4,10 @@ import com.neathorium.thorium.framework.selenium.enums.ManyGetter;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.WebElementList;
 import com.neathorium.thorium.framework.selenium.records.element.finder.ElementFilterParameters;
 import com.neathorium.thorium.framework.selenium.records.lazy.CachedLookupKeysData;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
 import com.neathorium.thorium.framework.core.abstracts.lazy.filtered.BaseFilterData;
 import com.neathorium.thorium.framework.core.namespaces.extensions.boilers.LazyLocatorList;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.EqualsPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -28,20 +28,20 @@ public class GetCurrentLazyData {
 
     @Override
     public boolean equals(Object o) {
-        if (CoreUtilities.isEqual(this, o)) {
+        if (this == o) {
             return true;
         }
 
-        if (NullableFunctions.isNull(o) || CoreUtilities.isNotEqual(getClass(), o.getClass())) {
+        if (NullablePredicates.isNull(o) || EqualsPredicates.isNotEqual(getClass(), o.getClass())) {
             return false;
         }
 
         final var that = (GetCurrentLazyData) o;
         return (
-            CoreUtilities.isEqual(data, that.data) &&
-            CoreUtilities.isEqual(elementFilterData, that.elementFilterData) &&
-            CoreUtilities.isEqual(locators, that.locators) &&
-            CoreUtilities.isEqual(getter, that.getter)
+            EqualsPredicates.isEqual(data, that.data) &&
+            EqualsPredicates.isEqual(elementFilterData, that.elementFilterData) &&
+            EqualsPredicates.isEqual(locators, that.locators) &&
+            EqualsPredicates.isEqual(getter, that.getter)
         );
     }
 

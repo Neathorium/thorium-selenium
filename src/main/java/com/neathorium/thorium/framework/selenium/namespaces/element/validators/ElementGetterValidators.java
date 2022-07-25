@@ -1,8 +1,8 @@
 package com.neathorium.thorium.framework.selenium.namespaces.element.validators;
 
-import com.neathorium.thorium.core.extensions.DecoratedList;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.java.extensions.classes.DecoratedList;
 
 import java.util.function.Function;
 

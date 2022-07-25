@@ -1,12 +1,12 @@
 package com.neathorium.thorium.framework.selenium.constants;
 
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.compatibility.NullJavascriptExecutor;
 import com.neathorium.thorium.framework.selenium.compatibility.NullSearchContext;
 import com.neathorium.thorium.framework.selenium.compatibility.NullTakesScreenshot;
 import com.neathorium.thorium.framework.selenium.compatibility.NullTargetLocator;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
-import com.neathorium.thorium.core.records.Data;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.TakesScreenshot;

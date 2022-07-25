@@ -1,13 +1,13 @@
 package com.neathorium.thorium.framework.selenium.namespaces;
 
+import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.ScriptFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.ScriptHandlerFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.utilities.SeleniumUtilities;
 import com.neathorium.thorium.framework.selenium.namespaces.validators.ScriptExecutions;
 import com.neathorium.thorium.framework.selenium.records.scripter.ScriptParametersData;
 import com.neathorium.thorium.core.constants.CoreConstants;
-import com.neathorium.thorium.core.namespaces.predicates.DataPredicates;
-import com.neathorium.thorium.core.records.Data;
 
 import java.util.function.BiFunction;
 

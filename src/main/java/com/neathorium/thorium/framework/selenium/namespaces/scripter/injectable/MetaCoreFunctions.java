@@ -1,20 +1,20 @@
 package com.neathorium.thorium.framework.selenium.namespaces.scripter.injectable;
 
+import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
 import com.neathorium.thorium.framework.selenium.constants.scripter.injectable.MetaCoreConstants;
 import com.neathorium.thorium.framework.selenium.constants.validators.SeleniumFormatterConstants;
 import com.neathorium.thorium.framework.selenium.namespaces.utilities.LazyElementUtilities;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
-import com.neathorium.thorium.core.namespaces.predicates.DataPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.EqualsPredicates;
 
 public interface MetaCoreFunctions {
     static String get(String base, LazyElement element, String optional, String end) {
         final var selector =  LazyElementUtilities.getCSSSelectorFromElement(element);
         final var filterData = LazyElementUtilities.getIndexedData(element);
-        var elementString = filterData.message.message + "('" + element.name + "', '" + selector;
+        var elementString = filterData.MESSAGE().MESSAGE() + "('" + element.NAME + "', '" + selector;
         if (DataPredicates.isValidNonFalse(filterData)) {
-            elementString += "', " + (CoreUtilities.isEqual(filterData.message.message, "TU.GETI") ? filterData.object : "'" + filterData.object + "'") + ")";
+            elementString += "', " + (EqualsPredicates.isEqual(filterData.MESSAGE().MESSAGE(), "TU.GETI") ? filterData.OBJECT() : "'" + filterData.OBJECT() + "'") + ")";
         } else {
             elementString = "')";
         }

@@ -1,6 +1,6 @@
 package com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers;
 
-import com.neathorium.thorium.core.extensions.DecoratedList;
+import com.neathorium.thorium.java.extensions.classes.DecoratedList;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;

@@ -1,5 +1,6 @@
 package com.neathorium.thorium.framework.selenium.namespaces.element.devtools;
 
+import com.neathorium.thorium.core.data.constants.CoreDataConstants;
 import com.neathorium.thorium.framework.selenium.constants.element.DevtoolsElementConstants;
 import com.neathorium.thorium.framework.selenium.constants.page.DefaultElementConstants;
 import com.neathorium.thorium.framework.selenium.constants.validators.SeleniumFormatterConstants;
@@ -8,16 +9,14 @@ import com.neathorium.thorium.framework.selenium.namespaces.driver.DevtoolsDrive
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.validators.SeleniumFormatter;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
-import com.neathorium.thorium.core.constants.CoreDataConstants;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.extensions.interfaces.functional.TriFunction;
 import com.neathorium.thorium.framework.core.namespaces.validators.FrameworkCoreFormatter;
 import com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore;
+import com.neathorium.thorium.java.extensions.interfaces.functional.TriFunction;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore.ifDriver;
 import static com.neathorium.thorium.framework.selenium.namespaces.WaitConditions.waitWith;
 
 public interface DevtoolsElement {

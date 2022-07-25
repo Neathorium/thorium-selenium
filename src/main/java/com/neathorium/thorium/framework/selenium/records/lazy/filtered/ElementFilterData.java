@@ -1,11 +1,11 @@
 package com.neathorium.thorium.framework.selenium.records.lazy.filtered;
 
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.enums.ManyGetter;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.WebElementList;
 import com.neathorium.thorium.framework.selenium.namespaces.factories.DriverFunctionFactory;
 import com.neathorium.thorium.framework.selenium.records.element.finder.ElementFilterParameters;
-import com.neathorium.thorium.core.records.Data;
 import com.neathorium.thorium.framework.core.abstracts.element.finder.BaseFilterParameters;
 import com.neathorium.thorium.framework.core.abstracts.lazy.filtered.BaseFilterData;
 import org.openqa.selenium.WebDriver;

@@ -1,18 +1,18 @@
 package com.neathorium.thorium.framework.selenium.namespaces.element.validators;
 
+import com.neathorium.thorium.core.wait.records.WaitTimeData;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.utilities.SeleniumUtilities;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
 import com.neathorium.thorium.framework.selenium.records.lazy.filtered.LazyFilteredElementParameters;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
 import com.neathorium.thorium.core.records.caster.WrappedCastData;
-import com.neathorium.thorium.core.records.wait.WaitTimeData;
 import com.neathorium.thorium.framework.core.abstracts.AbstractLazyResult;
 import com.neathorium.thorium.framework.core.namespaces.extensions.boilers.LazyLocatorList;
 import com.neathorium.thorium.framework.core.namespaces.validators.FrameworkCoreFormatter;
 import com.neathorium.thorium.framework.core.records.lazy.LazyElementParameters;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebElement;
 
@@ -28,9 +28,9 @@ public interface ElementParameters {
         var message = CoreFormatter.isNullMessageWithName(timeData, "TimeData");
         if (isBlank(message)) {
             message += (
-                CoreFormatter.isNullMessageWithName(timeData.clock, "TimeData clock") +
-                CoreFormatter.isNullMessageWithName(timeData.interval, "TimeData interval") +
-                CoreFormatter.isNullMessageWithName(timeData.duration, "TimeData duration")
+                CoreFormatter.isNullMessageWithName(timeData.CLOCK(), "TimeData clock") +
+                CoreFormatter.isNullMessageWithName(timeData.INTERVAL(), "TimeData interval") +
+                CoreFormatter.isNullMessageWithName(timeData.DURATION(), "TimeData duration")
             );
         }
 
@@ -47,7 +47,7 @@ public interface ElementParameters {
     }
 
     static boolean isInvalidLazyElemenet(LazyElementParameters<LazyLocatorList> data) {
-        return NullableFunctions.isNull(data) || StringUtils.isBlank(data.GETTER) || SeleniumUtilities.areNullLazyLocators(data.LAZY_LOCATORS);
+        return NullablePredicates.isNull(data) || StringUtils.isBlank(data.GETTER) || SeleniumUtilities.areNullLazyLocators(data.LAZY_LOCATORS);
     }
 
     static boolean isValidLazyElement(LazyElementParameters<LazyLocatorList> data) {
@@ -55,7 +55,7 @@ public interface ElementParameters {
     }
 
     static boolean isValidLazyFilteredElement(LazyFilteredElementParameters data) {
-        return !(isInvalidLazyElemenet(data) || (NullableFunctions.isNull(data.ELEMENT_FILTER_DATA)) || (NullableFunctions.isNull(data.ELEMENT_FILTER_DATA.filterParameter)));
+        return !(isInvalidLazyElemenet(data) || (NullablePredicates.isNull(data.ELEMENT_FILTER_DATA)) || (NullablePredicates.isNull(data.ELEMENT_FILTER_DATA.filterParameter)));
     }
 
 

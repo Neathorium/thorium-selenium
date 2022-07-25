@@ -8,6 +8,6 @@ import java.util.Map;
 
 public interface FunctionRepository {
     static <T> DriverFunction<T> get(Map<SeleniumTypeKey, DriverFunction<?>> functionMap, SeleniumTypedEnumKeyData<T> keyData) {
-        return (DriverFunction<T>) functionMap.get(keyData.key);
+        return (DriverFunction<T>) functionMap.get(keyData.KEY());
     }
 }

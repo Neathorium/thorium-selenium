@@ -1,9 +1,9 @@
 package com.neathorium.thorium.framework.selenium.namespaces.factories;
 
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.namespaces.element.ElementFilterFunctions;
 import com.neathorium.thorium.framework.selenium.records.element.finder.ElementFilterParameters;
 import com.neathorium.thorium.framework.selenium.records.lazy.filtered.ElementFilterData;
-import com.neathorium.thorium.core.records.Data;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 

@@ -1,11 +1,11 @@
 package com.neathorium.thorium.framework.selenium.constants;
 
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.enums.ManyGetter;
 import com.neathorium.thorium.framework.selenium.enums.SingleGetter;
 import com.neathorium.thorium.framework.selenium.namespaces.Driver;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.WebElementList;
-import com.neathorium.thorium.core.records.Data;
 import com.neathorium.thorium.framework.core.namespaces.extensions.boilers.LazyLocatorList;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

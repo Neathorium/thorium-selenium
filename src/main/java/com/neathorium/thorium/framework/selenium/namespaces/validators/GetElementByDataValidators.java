@@ -12,12 +12,12 @@ public interface GetElementByDataValidators {
         var message = isNullMessageWithName(data, "Get Element By Data");
         if (isBlank(message)) {
             message += (
-                isBlankMessageWithName(data.nameof, "Name of the function") +
-                isNullMessageWithName(data.validator, "Validator function") +
-                isNullMessageWithName(data.getter, "Getter function") +
-                isNullMessageWithName(data.formatter, "Formatter function") +
-                isNullMessageWithName(data.defaultValue, "Default data value") +
-                isBlankMessageWithName(data.filterName, "Filter type name")
+                isBlankMessageWithName(data.NAMEOF, "Name of the function") +
+                isNullMessageWithName(data.VALIDATOR, "Validator function") +
+                isNullMessageWithName(data.GETTER, "Getter function") +
+                isNullMessageWithName(data.FORMATTER, "Formatter function") +
+                isNullMessageWithName(data.DEFAULT_VALUE, "Default data value") +
+                isBlankMessageWithName(data.FILTER_NAME, "Filter type name")
             );
         }
 

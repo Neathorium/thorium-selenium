@@ -1,7 +1,7 @@
 package com.neathorium.thorium.framework.selenium.namespaces.utilities;
 
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.namespaces.StringUtilities;
+import com.neathorium.thorium.java.extensions.namespaces.utilities.StringUtilities;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 

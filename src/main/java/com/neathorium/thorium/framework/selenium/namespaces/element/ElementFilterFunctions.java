@@ -1,5 +1,6 @@
 package com.neathorium.thorium.framework.selenium.namespaces.element;
 
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumDataConstants;
 import com.neathorium.thorium.framework.selenium.enums.ManyGetter;
 import com.neathorium.thorium.framework.selenium.enums.SingleGetter;
@@ -10,7 +11,6 @@ import com.neathorium.thorium.framework.selenium.namespaces.factories.DriverFunc
 import com.neathorium.thorium.framework.selenium.namespaces.validators.SeleniumFormatter;
 import com.neathorium.thorium.core.namespaces.DataExecutionFunctions;
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
-import com.neathorium.thorium.core.records.Data;
 import com.neathorium.thorium.framework.core.abstracts.element.finder.BaseFilterParameters;
 import com.neathorium.thorium.framework.core.namespaces.extensions.boilers.LazyLocatorList;
 import com.neathorium.thorium.framework.selenium.namespaces.element.validators.ElementFilterParametersValidators;
@@ -27,7 +27,7 @@ public interface ElementFilterFunctions {
         return value -> ifDependency(
             nameof,
             ElementFilterParametersValidators.isInvalidElementFilterParametersMessage(data) + valueGuard.apply(value),
-            DataExecutionFunctions.validChain(data.getterMap.get(data.getter).apply(data.locators), filterFunction.apply(value), SeleniumDataConstants.NULL_ELEMENT),
+            DataExecutionFunctions.validChain(data.GETTER_MAP.get(data.GETTER).apply(data.LOCATORS), filterFunction.apply(value), SeleniumDataConstants.NULL_ELEMENT),
             SeleniumDataConstants.NULL_ELEMENT
         );
     }

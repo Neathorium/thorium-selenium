@@ -1,11 +1,11 @@
 package com.neathorium.thorium.framework.selenium.namespaces.factories;
 
+import com.neathorium.thorium.core.data.namespaces.DataFunctions;
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.records.Data;
+import com.neathorium.thorium.core.data.records.MethodMessageData;
 import com.neathorium.thorium.framework.selenium.constants.validators.SeleniumFormatterConstants;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
-import com.neathorium.thorium.core.namespaces.DataFunctions;
-import com.neathorium.thorium.core.records.Data;
-import com.neathorium.thorium.core.records.MethodMessageData;
 import org.openqa.selenium.WebDriver;
 
 import java.util.function.Function;
@@ -48,7 +48,7 @@ public interface DriverFunctionFactory {
     }
 
     static <T> DriverFunction<T> get(Data<T> data) {
-        return driver -> DataFactoryFunctions.getWith(data.object, data.status, DataFunctions.getFormattedMessage(data), data.exception, data.exceptionMessage);
+        return driver -> DataFactoryFunctions.getWith(data.OBJECT(), data.STATUS(), DataFunctions.getFormattedMessage(data), data.EXCEPTION(), data.EXCEPTION_MESSAGE());
     }
 
     static <T> DriverFunction<T> getFunction(Function<WebDriver, Data<T>> function) {

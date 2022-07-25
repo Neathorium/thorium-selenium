@@ -1,7 +1,7 @@
 package common;
 
-import com.neathorium.thorium.core.extensions.namespaces.asserts.JUnit5StatusAdapter;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.core.asserts.namespaces.JUnit5StatusAdapter;
+import com.neathorium.thorium.core.data.records.Data;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.function.BiConsumer;

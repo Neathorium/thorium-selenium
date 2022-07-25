@@ -1,6 +1,6 @@
 package com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers;
 
-import com.neathorium.thorium.core.extensions.interfaces.functional.boilers.IContainedData;
+import com.neathorium.thorium.framework.core.interfaces.IContainedData;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 

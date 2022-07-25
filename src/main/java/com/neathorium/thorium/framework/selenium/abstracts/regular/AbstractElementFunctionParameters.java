@@ -1,11 +1,11 @@
 package com.neathorium.thorium.framework.selenium.abstracts.regular;
 
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.records.element.is.ElementFormatData;
-import com.neathorium.thorium.core.extensions.interfaces.functional.TriFunction;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.java.extensions.interfaces.functional.TriFunction;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.EqualsPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -24,18 +24,18 @@ public abstract class AbstractElementFunctionParameters<ParameterType, ReturnTyp
 
     @Override
     public boolean equals(Object o) {
-        if (CoreUtilities.isEqual(this, o)) {
+        if (this == o) {
             return true;
         }
 
-        if (NullableFunctions.isNull(o) || CoreUtilities.isNotEqual(getClass(), o.getClass())) {
+        if (NullablePredicates.isNull(o) || EqualsPredicates.isNotEqual(getClass(), o.getClass())) {
             return false;
         }
 
         final var that = (AbstractElementFunctionParameters<?, ?>) o;
         return (
-            CoreUtilities.isEqual(handler, that.handler) &&
-            CoreUtilities.isEqual(formatData, that.formatData)
+            EqualsPredicates.isEqual(handler, that.handler) &&
+            EqualsPredicates.isEqual(formatData, that.formatData)
         );
     }
 

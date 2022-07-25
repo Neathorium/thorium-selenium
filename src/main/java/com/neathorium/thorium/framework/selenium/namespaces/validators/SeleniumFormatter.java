@@ -1,5 +1,8 @@
 package com.neathorium.thorium.framework.selenium.namespaces.validators;
 
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.records.Data;
+import com.neathorium.thorium.exceptions.namespaces.ExceptionFunctions;
 import com.neathorium.thorium.framework.selenium.abstracts.regular.AbstractElementValueParameters;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumCoreConstants;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumDataConstants;
@@ -17,14 +20,16 @@ import com.neathorium.thorium.framework.selenium.records.lazy.CachedLazyElementD
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
 import com.neathorium.thorium.framework.selenium.records.lazy.filtered.LazyFilteredElementParameters;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
-import com.neathorium.thorium.core.records.Data;
 import com.neathorium.thorium.framework.core.abstracts.AbstractLazyResult;
 import com.neathorium.thorium.framework.core.namespaces.extensions.boilers.LazyLocatorList;
 import com.neathorium.thorium.framework.core.namespaces.validators.FrameworkCoreFormatter;
 import com.neathorium.thorium.framework.core.records.lazy.LazyLocator;
+import com.neathorium.thorium.framework.selenium.records.reflection.message.InvokeCommonMessageParametersData;
+import com.neathorium.thorium.framework.selenium.records.reflection.message.InvokeParameterizedMessageData;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
+import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
+import com.neathorium.thorium.java.extensions.namespaces.utilities.StringUtilities;
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
@@ -41,9 +46,49 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public interface SeleniumFormatter {
+    static String getInvokeMethodCoreMessage(Exception exception, String message, String returnType, String parameterTypes) {
+        final var endLine = CoreFormatterConstants.END_LINE;
+        return ExceptionFunctions.isException(exception) ? (
+            String.join(
+                endLine,
+                message,
+                "An Exception(" + exception.getClass() + ") has occurred",
+                "Exception Message:\n" + exception.getMessage(),
+                "Cause: " + exception.getCause(),
+                "Method parameter types: " + parameterTypes,
+                "Result is of type " + returnType
+            ) + endLine
+        ) : CoreFormatterConstants.EMPTY;
+    }
+
+    static String getInvokeMethodCommonMessage(InvokeCommonMessageParametersData data, Exception exception) {
+        return (NullablePredicates.areNotNull(data, exception) && StringUtilities.areNotBlank(data.MESSAGE, data.PARAMETER_TYPES, data.RETURN_TYPE)) ? (
+            getInvokeMethodCoreMessage(exception, data.MESSAGE, data.PARAMETER_TYPES, data.RETURN_TYPE)
+        ) : "Data parameter" + CoreFormatterConstants.WAS_NULL;
+    }
+
+    static String getInvokeMethodParameterizedMessage(InvokeParameterizedMessageData data, Exception exception) {
+        if (NullablePredicates.areAnyNull(data, exception) || StringUtilities.areAnyBlank(data.MESSAGE, data.PARAMETER_TYPES, data.RETURN_TYPE)) {
+            return "Data parameter" + CoreFormatterConstants.WAS_NULL;
+        }
+
+        final var parameter = data.parameter;
+        final var parameterMessage = (isNotBlank(parameter) ? "Parameter was specified: " + parameter : "Parameter wasn't specified") + CoreFormatterConstants.END_LINE;
+        final var invokeMessage = getInvokeMethodCoreMessage(exception, data.MESSAGE, data.PARAMETER_TYPES, data.RETURN_TYPE);
+        return isNotBlank(invokeMessage) ? invokeMessage + parameterMessage : CoreFormatterConstants.EMPTY;
+    }
+
+    static Function<Exception, String> getInvokeMethodCommonMessageFunction(InvokeCommonMessageParametersData data) {
+        return exception -> NullablePredicates.areAnyNull(data, exception) ? getInvokeMethodCommonMessage(data, exception) : CoreFormatterConstants.PARAMETER_ISSUES;
+    }
+
+    static Function<Exception, String> getInvokeMethodParameterizedMessageFunction(InvokeParameterizedMessageData data) {
+        return exception -> NullablePredicates.areAnyNull(data, exception) ? getInvokeMethodParameterizedMessage(data, exception) : "Data or exception" + CoreFormatterConstants.WAS_NULL;
+    }
+
     static Data<String> getIsValuesMessage(Map<String, String> map, Data<String> object, String expected, Boolean keyCondition, String descriptor, String conditionDescriptor) {
         final var valuesMessage = "Values ";
-        final var defaultMessage = "getIsValuesMessage: ";
+        final var nameof = "getIsValuesMessage";
         final var errorMessage = (
             isBlankMessageWithName(conditionDescriptor, valuesMessage + "conditionDescriptor") +
             CoreFormatter.isNullMessageWithName(descriptor, valuesMessage + "descriptor") +
@@ -54,14 +99,14 @@ public interface SeleniumFormatter {
         );
 
         if (isNotBlank(errorMessage)) {
-            return DataFactoryFunctions.getWith(CoreFormatterConstants.EMPTY, false, defaultMessage + " " + conditionDescriptor + CoreFormatterConstants.PARAMETER_ISSUES + CoreFormatterConstants.DEFAULT_ERROR_MESSAGE_STRING + errorMessage);
+            return DataFactoryFunctions.getInvalidWith(CoreFormatterConstants.EMPTY, nameof, conditionDescriptor + CoreFormatterConstants.PARAMETER_ISSUES + CoreFormatterConstants.DEFAULT_ERROR_MESSAGE_STRING + errorMessage);
         }
 
         final var key = String.valueOf(keyCondition);
         final var localObject = map.getOrDefault(key, CoreFormatterConstants.EMPTY);
         final var status = isNotBlank(localObject);
-        final var message = defaultMessage + (descriptor + "(" + object + ") " + localObject + conditionDescriptor + " expected (\"" + expected + "\")" + CoreFormatterConstants.END_LINE);
-        return DataFactoryFunctions.getWith(message, status, message);
+        final var message = (descriptor + "(" + object + ") " + localObject + conditionDescriptor + " expected (\"" + expected + "\")" + CoreFormatterConstants.END_LINE);
+        return DataFactoryFunctions.getWith(message, status, nameof, message);
     }
 
     static String isValidElementFormatData(ElementFormatData<?> parameters) {
@@ -69,9 +114,9 @@ public interface SeleniumFormatter {
         var message = CoreFormatter.isNullMessageWithName(parameters, baseName);
         if (isBlank(message)) {
             message += (
-                CoreFormatter.isNullMessageWithName(parameters.formatter, baseName + " Formatter") +
-                isBlankMessageWithName(parameters.conditionName, baseName + " Name") +
-                isBlankMessageWithName(parameters.descriptor, baseName + " Descriptor")
+                CoreFormatter.isNullMessageWithName(parameters.FORMATTER(), baseName + " Formatter") +
+                isBlankMessageWithName(parameters.CONDITION_NAME(), baseName + " Name") +
+                isBlankMessageWithName(parameters.DESCRIPTOR(), baseName + " Descriptor")
             );
         }
 
@@ -247,7 +292,7 @@ public interface SeleniumFormatter {
         var message = CoreFormatter.isInvalidOrFalseMessageWithName(data, "Element data");
         if (isBlank(message)) {
             message += (
-                FrameworkCoreFormatter.isNullLazyElementMessage(data.object) +
+                FrameworkCoreFormatter.isNullLazyElementMessage(data.OBJECT()) +
                 isBlankMessageWithName(value, name)
             );
         }
@@ -272,7 +317,7 @@ public interface SeleniumFormatter {
         if (isBlank(message)) {
             message += (
                 CoreFormatter.isEqualMessage(SeleniumDataConstants.NULL_ELEMENT, "Null Selenium Element Data", element, "Element Data Parameter") +
-                isNullWebElementMessage(element.object)
+                isNullWebElementMessage(element.OBJECT())
             );
         }
 
@@ -295,9 +340,9 @@ public interface SeleniumFormatter {
         var message = CoreFormatter.isNullMessageWithName(defaults, "Defaults data");
         if (isBlank(message)) {
             message += (
-                isBlankMessageWithName(defaults.name, "Name of the function") +
-                getRepositoryNullMessage(defaults.repository) +
-                CoreFormatter.isNullMessageWithName(defaults.defaultValue, "Default data value")
+                isBlankMessageWithName(defaults.NAME(), "Name of the function") +
+                getRepositoryNullMessage(defaults.REPOSITORY()) +
+                CoreFormatter.isNullMessageWithName(defaults.DEFAULT_VALUE(), "Default data value")
             );
         }
 
@@ -316,7 +361,7 @@ public interface SeleniumFormatter {
     static String getCacheElementParametersErrorMessage(CacheElementDefaultsData defaults, CachedLazyElementData data) {
         var message = getCacheElementDefaultsDataInvalidMessage(defaults) + getCachedLazyElementDataInvalidMessage(data);
         if (isBlank(message)) {
-            message += getAlreadyCachedMessage(defaults.repository, data.element.name);
+            message += getAlreadyCachedMessage(defaults.REPOSITORY(), data.element.NAME);
         }
 
         return getNamedErrorMessageOrEmpty("getCacheElementParametersErrorMessage", message);
@@ -327,8 +372,8 @@ public interface SeleniumFormatter {
     }
 
     static String getAlreadyCachedMessage(Map<String, CachedLazyElementData> repository, String name) {
-        var message = getCachedCommonMessage(repository, name);
-        if (isBlank(message) && CoreUtilities.isTrue(repository.containsKey(name))) {
+        var message = SeleniumFormatter.getCachedCommonMessage(repository, name);
+        if (isBlank(message) && BooleanUtilities.isTrue(repository.containsKey(name))) {
             message += SeleniumFormatterConstants.LAZY_ELEMENT + " with name(\"" + name + "\") was already cached" + CoreFormatterConstants.END_LINE;
         }
 
@@ -336,8 +381,8 @@ public interface SeleniumFormatter {
     }
 
     static String getNotCachedMessage(Map<String, CachedLazyElementData> repository, String name) {
-        var message = getCachedCommonMessage(repository, name);
-        if (isBlank(message) && CoreUtilities.isFalse(repository.containsKey(name))) {
+        var message = SeleniumFormatter.getCachedCommonMessage(repository, name);
+        if (isBlank(message) && BooleanUtilities.isFalse(repository.containsKey(name))) {
             message += SeleniumFormatterConstants.LAZY_ELEMENT + " with name(\"" + name + "\") wasn't cached" + CoreFormatterConstants.END_LINE;
         }
 

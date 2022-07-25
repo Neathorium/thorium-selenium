@@ -1,5 +1,6 @@
 package com.neathorium.thorium.framework.selenium.namespaces.driver;
 
+import com.neathorium.thorium.core.data.constants.CoreDataConstants;
 import com.neathorium.thorium.framework.selenium.constants.driver.devtools.DevtoolsDriverFunctionConstants;
 import com.neathorium.thorium.framework.selenium.constants.driver.devtools.DevtoolsViewConstants;
 import com.neathorium.thorium.framework.selenium.namespaces.SeleniumExecutor;
@@ -7,11 +8,8 @@ import com.neathorium.thorium.framework.selenium.namespaces.element.Element;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.scripter.MutationObserver;
 import com.neathorium.thorium.framework.selenium.namespaces.utilities.driver.DevtoolsDriverUtilities;
-import com.neathorium.thorium.core.constants.CoreDataConstants;
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
 import com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore;
-
-import static com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore.ifDriver;
 
 public interface DevtoolsDriverFunctions {
     static DriverFunction<Boolean> clearConsole() {

@@ -1,13 +1,14 @@
 package com.neathorium.thorium.framework.selenium.records.element.is.regular;
 
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.abstracts.regular.AbstractElementFunctionParameters;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.records.element.is.ElementFormatData;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
-import com.neathorium.thorium.core.extensions.interfaces.functional.TriFunction;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.java.extensions.interfaces.functional.TriFunction;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.EqualsPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
+import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
 
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -27,16 +28,20 @@ public class ElementParameterizedValueParameters<ReturnType> extends AbstractEle
 
     @Override
     public boolean equals(Object o) {
-        if (CoreUtilities.isEqual(this, o)) {
+        if (this == o) {
             return true;
         }
 
-        if (NullableFunctions.isNull(o) || CoreUtilities.isNotEqual(getClass(), o.getClass()) || CoreUtilities.isFalse(super.equals(o))) {
+        if (
+            NullablePredicates.isNull(o) ||
+            EqualsPredicates.isNotEqual(getClass(), o.getClass()) ||
+            BooleanUtilities.isFalse(super.equals(o))
+        ) {
             return false;
         }
 
         final var that = (ElementParameterizedValueParameters<?>) o;
-        return CoreUtilities.isEqual(function, that.function);
+        return EqualsPredicates.isEqual(function, that.function);
     }
 
     @Override
