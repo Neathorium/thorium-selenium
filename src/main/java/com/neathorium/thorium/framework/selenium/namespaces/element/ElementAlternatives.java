@@ -1,19 +1,19 @@
 package com.neathorium.thorium.framework.selenium.namespaces.element;
 
+import com.neathorium.thorium.core.data.constants.CoreDataConstants;
+import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.constants.validators.SeleniumFormatterConstants;
 import com.neathorium.thorium.framework.selenium.enums.SingleGetter;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.repositories.LocatorRepository;
 import com.neathorium.thorium.framework.selenium.namespaces.scripter.Execute;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
-import com.neathorium.thorium.core.constants.CoreDataConstants;
-import com.neathorium.thorium.core.records.Data;
 import com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore;
 import com.neathorium.thorium.framework.selenium.namespaces.utilities.SeleniumUtilities;
 import org.openqa.selenium.By;
 
 import static com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore.ifDriver;
-import static com.neathorium.thorium.core.namespaces.predicates.DataPredicates.isValidNonFalse;
 
 public interface ElementAlternatives {
     static DriverFunction<Boolean> clearWithSelectAll(LazyElement element) {
@@ -21,7 +21,7 @@ public interface ElementAlternatives {
     }
 
     static DriverFunction<Boolean> clearWithSelectAll(Data<LazyElement> data) {
-        return ExecutionCore.ifDriver("clearWithSelectAll", isValidNonFalse(data), clearWithSelectAll(data.object), CoreDataConstants.NULL_BOOLEAN);
+        return ExecutionCore.ifDriver("clearWithSelectAll", DataPredicates.isValidNonFalse(data), clearWithSelectAll(data.OBJECT()), CoreDataConstants.NULL_BOOLEAN);
     }
 
     static DriverFunction<Boolean> clearWithSelectAll(By locator, SingleGetter getter) {
@@ -37,7 +37,7 @@ public interface ElementAlternatives {
     }
 
     static DriverFunction<Boolean> clickWithEventDispatcher(Data<LazyElement> data) {
-        return ExecutionCore.ifDriver("clickWithEventDispatcher", isValidNonFalse(data), clickWithEventDispatcher(data.object), CoreDataConstants.NULL_BOOLEAN);
+        return ExecutionCore.ifDriver("clickWithEventDispatcher", DataPredicates.isValidNonFalse(data), clickWithEventDispatcher(data.OBJECT()), CoreDataConstants.NULL_BOOLEAN);
     }
 
     static DriverFunction<Boolean> clickWithEventDispatcher(By locator, SingleGetter getter) {

@@ -1,25 +1,26 @@
 package com.neathorium.thorium.framework.selenium.records.element.is.regular;
 
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.records.element.is.ElementFormatData;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
-import com.neathorium.thorium.core.extensions.interfaces.functional.TriFunction;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.java.extensions.interfaces.functional.TriFunction;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.EqualsPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
+import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
 
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
+import java.util.function.Predicate;
 
-public class ElementConditionParameters<ReturnType> extends ElementBooleanValueParameters<ReturnType> {
-    public final UnaryOperator<Boolean> inverter;
+public class ElementConditionParameters<ReturnType, PredicateType> extends ElementBooleanValueParameters<ReturnType> {
+    public final Function<Predicate<PredicateType>, Predicate<PredicateType>> inverter;
 
     public ElementConditionParameters(
         TriFunction<DriverFunction<Boolean>, Function<Data<Boolean>, Data<ReturnType>>, Data<ReturnType>, DriverFunction<ReturnType>> handler,
         ElementFormatData<ReturnType> formatData,
         Function<LazyElement, DriverFunction<ReturnType>> function,
-        UnaryOperator<Boolean> inverter
+        Function<Predicate<PredicateType>, Predicate<PredicateType>> inverter
     ) {
         super(handler, formatData, function);
         this.inverter = inverter;
@@ -27,16 +28,20 @@ public class ElementConditionParameters<ReturnType> extends ElementBooleanValueP
 
     @Override
     public boolean equals(Object o) {
-        if (CoreUtilities.isEqual(this, o)) {
+        if (this == o) {
             return true;
         }
 
-        if (NullableFunctions.isNull(o) || CoreUtilities.isNotEqual(getClass(), o.getClass()) || CoreUtilities.isFalse(super.equals(o))) {
+        if (
+            NullablePredicates.isNull(o) ||
+            EqualsPredicates.isNotEqual(getClass(), o.getClass()) ||
+            BooleanUtilities.isFalse(super.equals(o))
+        ) {
             return false;
         }
 
-        final var that = (ElementConditionParameters<?>) o;
-        return CoreUtilities.isEqual(inverter, that.inverter);
+        final var that = (ElementConditionParameters<?, ?>) o;
+        return EqualsPredicates.isEqual(inverter, that.inverter);
     }
 
     @Override

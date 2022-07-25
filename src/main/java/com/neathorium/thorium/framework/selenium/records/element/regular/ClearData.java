@@ -4,8 +4,8 @@ import com.neathorium.thorium.framework.selenium.enums.SingleGetter;
 import com.neathorium.thorium.framework.selenium.namespaces.element.Element;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.EqualsPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import org.openqa.selenium.By;
 
 import java.util.Objects;
@@ -35,19 +35,19 @@ public class ClearData {
 
     @Override
     public boolean equals(Object o) {
-        if (CoreUtilities.isEqual(this, o)) {
+        if (this == o) {
             return true;
         }
 
-        if (NullableFunctions.isNull(o) || CoreUtilities.isNotEqual(getClass(), o.getClass())) {
+        if (NullablePredicates.isNull(o) || EqualsPredicates.isNotEqual(getClass(), o.getClass())) {
             return false;
         }
 
         final var clearData = (ClearData) o;
         return (
-            CoreUtilities.isEqual(clearLazy, clearData.clearLazy) &&
-            CoreUtilities.isEqual(clearByWithGetter, clearData.clearByWithGetter) &&
-            CoreUtilities.isEqual(clearBy, clearData.clearBy)
+            EqualsPredicates.isEqual(clearLazy, clearData.clearLazy) &&
+            EqualsPredicates.isEqual(clearByWithGetter, clearData.clearByWithGetter) &&
+            EqualsPredicates.isEqual(clearBy, clearData.clearBy)
         );
     }
 

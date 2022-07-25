@@ -1,6 +1,6 @@
 package com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers;
 
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.core.data.records.Data;
 import org.openqa.selenium.WebDriver;
 
 import java.util.function.Function;

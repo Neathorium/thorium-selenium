@@ -1,32 +1,31 @@
 package com.neathorium.thorium.framework.selenium.namespaces;
 
+import com.neathorium.thorium.core.data.constants.CoreDataConstants;
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.wait.namespaces.WaitFunctions;
+import com.neathorium.thorium.core.wait.namespaces.factories.WaitDataFactory;
+import com.neathorium.thorium.core.wait.namespaces.factories.WaitTimeDataFactory;
 import com.neathorium.thorium.framework.selenium.constants.DriverFunctionConstants;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.factories.DriverFunctionFactory;
 import com.neathorium.thorium.framework.selenium.records.element.regular.ElementWaitParameters;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElementWaitParameters;
-import com.neathorium.thorium.core.constants.CoreDataConstants;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
-import com.neathorium.thorium.core.namespaces.factories.wait.WaitDataFactory;
-import com.neathorium.thorium.core.namespaces.factories.wait.WaitTimeDataFactory;
-import com.neathorium.thorium.core.namespaces.wait.Wait;
 import com.neathorium.thorium.framework.selenium.namespaces.utilities.SeleniumUtilities;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import org.openqa.selenium.By;
 
 import java.util.function.Function;
 
-import static com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore.ifDriver;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public interface WaitConditions {
     static DriverFunction<Boolean> waitWith(By locator, Function<By, DriverFunction<Boolean>> conditionGetter, String option, int interval, int timeout, String message) {
         return ExecutionCore.ifDriver(
             "waitConditionCore",
-            NullableFunctions.isNotNull(conditionGetter),
-            Wait.core(WaitDataFactory.getWith(
+            NullablePredicates.isNotNull(conditionGetter),
+            WaitFunctions.core(WaitDataFactory.getWith(
                 conditionGetter.apply(locator),
                 isBlank(option) ? WaitPredicateFunctions::isTruthyData : WaitPredicateFunctions::isFalsyData,
                 "Element located by: " + locator + " to be " + (isBlank(message) ? "clickable" : message) + CoreFormatterConstants.END_LINE,
@@ -39,17 +38,17 @@ public interface WaitConditions {
     static DriverFunction<Boolean> waitWith(LazyElement data, Function<LazyElement, DriverFunction<Boolean>> conditionGetter, String option, int interval, int timeout, String message) {
         return ExecutionCore.ifDriver(
             "waitConditionCore",
-            NullableFunctions.isNotNull(conditionGetter),
+            NullablePredicates.isNotNull(conditionGetter),
             DriverFunctionFactory.prependMessage(
-                Wait.core(WaitDataFactory.getWith(
+                WaitFunctions.core(WaitDataFactory.getWith(
                     conditionGetter.apply(data),
                     isBlank(option) ? WaitPredicateFunctions::isTruthyData : WaitPredicateFunctions::isFalsyData,
-                    data.name + " " + message,
+                    data.NAME + " " + message,
                     WaitTimeDataFactory.getWithDefaultClock(interval, timeout)
                 ))::apply,
-                CoreFormatterConstants.ELEMENT + data.name
+                CoreFormatterConstants.ELEMENT + data.NAME
             ),
-            DataFactoryFunctions.prependMessage(CoreDataConstants.NULL_BOOLEAN, CoreFormatterConstants.ELEMENT + data.name)
+            DataFactoryFunctions.prependMessage(CoreDataConstants.NULL_BOOLEAN, CoreFormatterConstants.ELEMENT + data.NAME)
         );
     }
 

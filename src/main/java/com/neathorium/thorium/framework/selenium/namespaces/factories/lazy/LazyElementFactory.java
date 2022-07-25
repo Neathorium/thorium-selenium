@@ -9,12 +9,12 @@ import com.neathorium.thorium.framework.selenium.namespaces.utilities.SeleniumUt
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
 import com.neathorium.thorium.framework.selenium.records.lazy.filtered.LazyFilteredElementParameters;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
 import com.neathorium.thorium.framework.core.abstracts.AbstractLazyResult;
 import com.neathorium.thorium.framework.core.namespaces.extensions.boilers.LazyLocatorList;
 import com.neathorium.thorium.framework.core.namespaces.validators.FrameworkCoreFormatter;
 import com.neathorium.thorium.framework.core.namespaces.validators.Invalids;
 import com.neathorium.thorium.framework.core.records.lazy.LazyLocator;
+import com.neathorium.thorium.java.extensions.constants.IExtendedListConstants;
 import org.openqa.selenium.By;
 
 import java.util.ArrayList;
@@ -25,7 +25,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.neathorium.thorium.core.extensions.constants.IExtendedListConstants.FIRST_INDEX;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public interface LazyElementFactory {
@@ -48,7 +47,7 @@ public interface LazyElementFactory {
     }
 
     static LazyElement getWith(AbstractLazyResult<LazyFilteredElementParameters> element) {
-        return getWith(element.name, SeleniumUtilities.getParametersCopy(element.parameters), element.validator);
+        return getWith(element.NAME, SeleniumUtilities.getParametersCopy(element.PARAMETERS), element.VALIDATOR);
     }
 
     static LazyElement getWithInvalidAlwaysFalseValidator(String name, Map<String, LazyFilteredElementParameters> parameters) {
@@ -64,7 +63,7 @@ public interface LazyElementFactory {
     }
 
     static LazyElement getWithDefaultNameAndValidator(Map<String, LazyFilteredElementParameters> parameters) {
-        return getWithDefaultValidator(CoreUtilities.getIncrementalUUID(SeleniumCoreConstants.ATOMIC_COUNT), parameters);
+        return getWithDefaultValidator("id-" + SeleniumCoreConstants.ATOMIC_COUNT.getAndIncrement(), parameters);
     }
 
     static LazyElement getWithFilterParametersAndNestedLocator(String name, boolean isIndexed, int index, LazyLocatorList locators, String getter) {
@@ -86,7 +85,7 @@ public interface LazyElementFactory {
     }
 
     static LazyElement getWithFilterParametersAndNestedLocator(String name, LazyLocatorList locators, String getter) {
-        return getWithFilterParametersAndNestedLocator(name, false, FIRST_INDEX, locators, getter);
+        return getWithFilterParametersAndNestedLocator(name, false, IExtendedListConstants.FIRST_INDEX, locators, getter);
     }
 
     static LazyElement getWithFilterParametersAndNestedLocator(String name, String message, LazyLocatorList locators, String getter) {
@@ -116,7 +115,7 @@ public interface LazyElementFactory {
     }
 
     static LazyElement getWithFilterParametersAndDefaultIndex(String name, LazyLocator locator, String getter) {
-        return getWithFilterParameters(name, true, FIRST_INDEX, locator, getter);
+        return getWithFilterParameters(name, true, IExtendedListConstants.FIRST_INDEX, locator, getter);
     }
 
     static LazyElement getWithFilterParameters(String name, boolean isIndexed, int index, LazyLocator locator) {

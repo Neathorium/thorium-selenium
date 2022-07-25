@@ -7,10 +7,10 @@ import com.neathorium.thorium.framework.selenium.records.lazy.filtered.LazyFilte
 import com.neathorium.thorium.framework.core.namespaces.extensions.boilers.LazyLocatorList;
 import com.neathorium.thorium.framework.core.namespaces.factory.LazyLocatorListFactory;
 import com.neathorium.thorium.framework.core.records.lazy.LazyLocator;
+import com.neathorium.thorium.java.extensions.constants.IExtendedListConstants;
 import org.openqa.selenium.WebElement;
 
 import static com.neathorium.thorium.framework.selenium.constants.LazyIndexedElementFactoryConstants.GETTER;
-import static com.neathorium.thorium.core.extensions.constants.IExtendedListConstants.FIRST_INDEX;
 import static com.neathorium.thorium.framework.core.constants.lazy.CommonLazyIndexedFactoryConstants.PROBABILITY;
 
 public interface LazyFilteredElementParametersFactory {
@@ -76,7 +76,7 @@ public interface LazyFilteredElementParametersFactory {
     }
 
     static LazyFilteredElementParameters getWithFilterParametersAndLocatorListAndIndex(LazyLocatorList lazyLocators, String getter) {
-        return getWithFilterParametersAndLocatorList(true, FIRST_INDEX, PROBABILITY, lazyLocators, getter);
+        return getWithFilterParametersAndLocatorList(true, IExtendedListConstants.FIRST_INDEX, PROBABILITY, lazyLocators, getter);
     }
 
     static LazyFilteredElementParameters getWithFilterParametersAndLocatorList(boolean isFiltered, int index, double probability, LazyLocatorList lazyLocators) {
@@ -88,7 +88,7 @@ public interface LazyFilteredElementParametersFactory {
     }
 
     static LazyFilteredElementParameters getWithFilterParametersAndLocatorList(boolean isFiltered, double probability, LazyLocatorList lazyLocators, String getter) {
-        return getWithFilterParametersAndLocatorList(isFiltered, FIRST_INDEX, probability, lazyLocators, getter);
+        return getWithFilterParametersAndLocatorList(isFiltered, IExtendedListConstants.FIRST_INDEX, probability, lazyLocators, getter);
     }
 
     static LazyFilteredElementParameters getWithFilterParametersAndLocatorList(boolean isFiltered, int index, LazyLocatorList lazyLocators) {
@@ -96,7 +96,7 @@ public interface LazyFilteredElementParametersFactory {
     }
 
     static LazyFilteredElementParameters getWithFilterParametersAndLocatorList(boolean isFiltered, double probability, LazyLocatorList lazyLocators) {
-        return getWithFilterParametersAndLocatorList(isFiltered, FIRST_INDEX, probability, lazyLocators, GETTER);
+        return getWithFilterParametersAndLocatorList(isFiltered, IExtendedListConstants.FIRST_INDEX, probability, lazyLocators, GETTER);
     }
 
     static LazyFilteredElementParameters getWithFilterParametersAndLocatorList(int index, double probability, LazyLocatorList lazyLocators) {
@@ -104,7 +104,7 @@ public interface LazyFilteredElementParametersFactory {
     }
 
     static LazyFilteredElementParameters getWithFilterParametersAndLocatorList(boolean isFiltered, LazyLocatorList lazyLocators) {
-        return getWithFilterParametersAndLocatorList(isFiltered, FIRST_INDEX, PROBABILITY, lazyLocators, GETTER);
+        return getWithFilterParametersAndLocatorList(isFiltered, IExtendedListConstants.FIRST_INDEX, PROBABILITY, lazyLocators, GETTER);
     }
 
     static LazyFilteredElementParameters getWithFilterParametersAndLocatorList(int index, LazyLocatorList lazyLocators) {
@@ -124,7 +124,7 @@ public interface LazyFilteredElementParametersFactory {
     }
 
     static LazyFilteredElementParameters getWithFilterParametersAndLocator(boolean isFiltered, double probability, LazyLocator lazyLocator, String getter) {
-        return getWithFilterParametersAndLocator(isFiltered, FIRST_INDEX, probability, lazyLocator, getter);
+        return getWithFilterParametersAndLocator(isFiltered, IExtendedListConstants.FIRST_INDEX, probability, lazyLocator, getter);
     }
 
     static LazyFilteredElementParameters getWithFilterParametersAndLocator(int index, double probability, LazyLocator lazyLocator, String getter) {
@@ -132,7 +132,7 @@ public interface LazyFilteredElementParametersFactory {
     }
 
     static LazyFilteredElementParameters getWithFilterParametersAndLocator(boolean isFiltered, LazyLocator lazyLocator, String getter) {
-        return getWithFilterParametersAndLocator(isFiltered, FIRST_INDEX, lazyLocator, getter);
+        return getWithFilterParametersAndLocator(isFiltered, IExtendedListConstants.FIRST_INDEX, lazyLocator, getter);
     }
 
     static LazyFilteredElementParameters getWithFilterParametersAndLocator(boolean isFiltered, int index, LazyLocator lazyLocator) {
@@ -144,7 +144,7 @@ public interface LazyFilteredElementParametersFactory {
     }
 
     static LazyFilteredElementParameters getWithFilterParametersAndLocator(boolean isFiltered, double probability, LazyLocator lazyLocator) {
-        return getWithFilterParametersAndLocator(isFiltered, FIRST_INDEX, probability, lazyLocator, GETTER);
+        return getWithFilterParametersAndLocator(isFiltered, IExtendedListConstants.FIRST_INDEX, probability, lazyLocator, GETTER);
     }
 
     static LazyFilteredElementParameters getWithFilterParametersAndLocator(int index, LazyLocator lazyLocator, String getter) {
@@ -152,7 +152,7 @@ public interface LazyFilteredElementParametersFactory {
     }
 
     static LazyFilteredElementParameters getWithFilterParametersAndLocator(boolean isFiltered, LazyLocator lazyLocator) {
-        return getWithFilterParametersAndLocator(isFiltered, FIRST_INDEX, PROBABILITY, lazyLocator, GETTER);
+        return getWithFilterParametersAndLocator(isFiltered, IExtendedListConstants.FIRST_INDEX, PROBABILITY, lazyLocator, GETTER);
     }
 
     static LazyFilteredElementParameters getWithFilterParametersAndLocator(int index, LazyLocator lazyLocator) {

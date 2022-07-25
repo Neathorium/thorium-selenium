@@ -5,11 +5,11 @@ import com.neathorium.thorium.framework.selenium.constants.SeleniumGetOrderConst
 import com.neathorium.thorium.framework.selenium.records.ExternalSeleniumSelectorData;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElementWithOptionsData;
-import com.neathorium.thorium.core.extensions.DecoratedList;
 import com.neathorium.thorium.framework.core.constants.AdjusterConstants;
 import com.neathorium.thorium.framework.core.namespaces.factory.InternalSelectorDataFactory;
 import com.neathorium.thorium.framework.core.records.InternalSelectorData;
 import com.neathorium.thorium.framework.core.records.ProbabilityData;
+import com.neathorium.thorium.java.extensions.classes.DecoratedList;
 
 public interface LazyElementWithOptionsDataFactory {
     static LazyElementWithOptionsData get(
@@ -28,7 +28,7 @@ public interface LazyElementWithOptionsDataFactory {
         DecoratedList<String> getOrder,
         ProbabilityData probabilityData
     ) {
-       return new LazyElementWithOptionsData(element, InternalSelectorDataFactory.getWithDefaultRange(element.parameters.size()), externalData, getOrder, probabilityData);
+       return new LazyElementWithOptionsData(element, InternalSelectorDataFactory.getWithDefaultRange(element.PARAMETERS.size()), externalData, getOrder, probabilityData);
     }
 
     static LazyElementWithOptionsData getWithDefaultProbabilityData(LazyElement element, InternalSelectorData internalData, ExternalSeleniumSelectorData externalData, DecoratedList<String> getOrder) {

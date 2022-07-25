@@ -1,6 +1,6 @@
 package com.neathorium.thorium.framework.selenium.records.scripter;
 
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.core.data.records.Data;
 
 import java.util.function.Function;
 

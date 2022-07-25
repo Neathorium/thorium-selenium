@@ -1,11 +1,11 @@
 package com.neathorium.thorium.framework.selenium.namespaces.validators;
 
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.abstracts.reflection.BaseInvokerDefaultsData;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
-import com.neathorium.thorium.core.records.Data;
-import com.neathorium.thorium.core.records.MethodData;
-import com.neathorium.thorium.core.records.reflection.message.InvokeCommonMessageParametersData;
+import com.neathorium.thorium.framework.selenium.records.reflection.message.InvokeCommonMessageParametersData;
+import com.neathorium.thorium.framework.selenium.repositories.method.records.MethodData;
 
 import java.util.function.Function;
 
@@ -21,7 +21,7 @@ public interface InvokeCoreValidator {
             CoreFormatter.isNullMessageWithName(handler, "Handler") +
             CoreFormatter.isNullMessageWithName(messageHandler, "Message Handler") +
             ScriptExecutions.isInvalidInvokerDefaultsMessage(defaults) +
-            CoreFormatter.isFalseMessageWithName(defaults.guard.test(handler), "Guard tested handler")
+            CoreFormatter.isFalseMessageWithName(defaults.GUARD.test(handler), "Guard tested handler")
         );
     }
     static <ParameterType, HandlerType, ReturnType> String isInvalidInvokeCoreParametersMessage(

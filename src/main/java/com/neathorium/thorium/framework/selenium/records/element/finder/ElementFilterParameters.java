@@ -1,6 +1,6 @@
 package com.neathorium.thorium.framework.selenium.records.element.finder;
 
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.core.abstracts.element.finder.BaseFilterParameters;
 import com.neathorium.thorium.framework.core.namespaces.extensions.boilers.LazyLocatorList;
 import org.openqa.selenium.WebDriver;

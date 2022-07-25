@@ -1,5 +1,7 @@
 package com.neathorium.thorium.framework.selenium.namespaces.utilities;
 
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.constants.ElementFinderConstants;
 import com.neathorium.thorium.framework.selenium.constants.SelectorStrategyNameConstants;
 import com.neathorium.thorium.framework.selenium.enums.ManyGetter;
@@ -12,13 +14,11 @@ import com.neathorium.thorium.framework.selenium.namespaces.factories.ElementFil
 import com.neathorium.thorium.framework.selenium.records.element.finder.ElementFilterParameters;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
-import com.neathorium.thorium.core.extensions.namespaces.predicates.BasicPredicates;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
-import com.neathorium.thorium.core.records.Data;
 import com.neathorium.thorium.framework.core.abstracts.lazy.filtered.BaseFilterData;
 import com.neathorium.thorium.framework.core.namespaces.extensions.boilers.LazyLocatorList;
 import com.neathorium.thorium.framework.core.namespaces.validators.FrameworkCoreFormatter;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.BasicPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -35,9 +35,9 @@ public interface LazyElementUtilities {
             return DataFactoryFunctions.getInvalidWith("", nameof, "TU.GE");
         }
 
-        final var parameters = element.parameters;
+        final var parameters = element.PARAMETERS;
         final var selectorData = parameters.get(SelectorStrategyNameConstants.CSS_SELECTOR);
-        if (NullableFunctions.isNull(selectorData)) {
+        if (NullablePredicates.isNull(selectorData)) {
             return DataFactoryFunctions.getInvalidWith("", nameof, "TU.GE");
         }
 
@@ -62,9 +62,9 @@ public interface LazyElementUtilities {
             return CoreFormatterConstants.EMPTY;
         }
 
-        final var parameters = element.parameters;
+        final var parameters = element.PARAMETERS;
         final var selectorData = parameters.get(SelectorStrategyNameConstants.CSS_SELECTOR);
-        if (NullableFunctions.isNull(selectorData)) {
+        if (NullablePredicates.isNull(selectorData)) {
             return CoreFormatterConstants.EMPTY;
         }
         final var lazyLocators = selectorData.LAZY_LOCATORS;

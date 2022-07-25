@@ -5,9 +5,9 @@ import com.neathorium.thorium.framework.selenium.constants.SeleniumLazyLocatorCo
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
 import com.neathorium.thorium.framework.core.namespaces.factory.LazyLocatorFactory;
 import com.neathorium.thorium.framework.core.records.lazy.LazyLocator;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import org.openqa.selenium.By;
 
-import static com.neathorium.thorium.core.extensions.namespaces.NullableFunctions.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public interface SeleniumLazyLocatorFactory {
@@ -50,7 +50,7 @@ public interface SeleniumLazyLocatorFactory {
     }
 
     static LazyLocator get(By locator) {
-        if (isNull(locator)) {
+        if (NullablePredicates.isNull(locator)) {
             return getWithDefaults();
         }
 

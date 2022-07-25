@@ -1,7 +1,13 @@
 package com.neathorium.thorium.framework.selenium.namespaces.element;
 
+import com.neathorium.thorium.core.data.constants.CoreDataConstants;
+import com.neathorium.thorium.core.data.namespaces.DataFunctions;
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.constants.Alternatives;
 import com.neathorium.thorium.framework.selenium.constants.ElementWaitDefaults;
+import com.neathorium.thorium.framework.selenium.constants.SeleniumDataConstants;
 import com.neathorium.thorium.framework.selenium.constants.validators.SeleniumFormatterConstants;
 import com.neathorium.thorium.framework.selenium.enums.SingleGetter;
 import com.neathorium.thorium.framework.selenium.namespaces.Driver;
@@ -15,17 +21,13 @@ import com.neathorium.thorium.framework.selenium.records.ActionWhenData;
 import com.neathorium.thorium.framework.selenium.records.element.regular.ElementWaitParameters;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElementWaitParameters;
-import com.neathorium.thorium.core.constants.CoreDataConstants;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.extensions.interfaces.functional.TriFunction;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
 import com.neathorium.thorium.core.namespaces.DataExecutionFunctions;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
-import com.neathorium.thorium.core.namespaces.predicates.DataPredicates;
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
-import com.neathorium.thorium.core.records.Data;
 import com.neathorium.thorium.framework.core.namespaces.validators.FrameworkCoreFormatter;
 import com.neathorium.thorium.framework.selenium.namespaces.utilities.SeleniumUtilities;
+import com.neathorium.thorium.java.extensions.interfaces.functional.TriFunction;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -39,9 +41,9 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public interface Element {
     private static Data<Boolean> actionCore(Data<Void> data, String message) {
         final var nameof = "action";
-        final var status = data.status;
-        final var lMessage = SeleniumFormatter.getActionMessage(message, data.message.formatter.apply(data.message.nameof, data.message.message), status);
-        final var exception = data.exception;
+        final var status = data.STATUS();
+        final var lMessage = SeleniumFormatter.getActionMessage(message, DataFunctions.getFormattedMessage(data), status);
+        final var exception = data.EXCEPTION();
         return DataFactoryFunctions.getBoolean(status, nameof, lMessage, exception);
     }
 
@@ -51,7 +53,7 @@ public interface Element {
 
     static DriverFunction<String> getWhenCore(DriverFunction<Boolean> waiter, DriverFunction<String> getter) {
         final var nameof = "getWhenCore";
-        return ifDriver(nameof, CoreUtilities.areNotNull(waiter, getter), SeleniumExecutor.execute(nameof, waiter, getter), CoreDataConstants.NULL_STRING);
+        return ifDriver(nameof, NullablePredicates.areNotNull(waiter, getter), SeleniumExecutor.execute(nameof, waiter, getter), CoreDataConstants.NULL_STRING);
     }
 
     static DriverFunction<String> getWhenCore(
@@ -60,9 +62,9 @@ public interface Element {
         Function<LazyElementWaitParameters, DriverFunction<Boolean>> waiter,
         BiFunction<LazyElement, String, DriverFunction<String>> getter
     ) {
-        return SeleniumUtilities.isNotNullLazyElementWaitParametersData(data) && CoreUtilities.areNotNull(waiter, getter) && isNotBlank(input) ? (
+        return SeleniumUtilities.isNotNullLazyElementWaitParametersData(data) && NullablePredicates.areNotNull(waiter, getter) && isNotBlank(input) ? (
             getWhenCore(waiter.apply(data), getter.apply(data.object, input))
-        ) : DriverFunctionFactory.get(CoreDataConstants.DATA_WAS_NULL_OR_FALSE_STRING);
+        ) : DriverFunctionFactory.get(SeleniumDataConstants.DATA_WAS_NULL_OR_FALSE_STRING);
     }
 
     static DriverFunction<String> getWhenCore(
@@ -70,9 +72,9 @@ public interface Element {
         Function<LazyElementWaitParameters, DriverFunction<Boolean>> waiter,
         Function<LazyElement, DriverFunction<String>> getter
     ) {
-        return (SeleniumUtilities.isNotNullLazyElementWaitParametersData(data) && CoreUtilities.areNotNull(waiter, getter)) ? (
+        return (SeleniumUtilities.isNotNullLazyElementWaitParametersData(data) && NullablePredicates.areNotNull(waiter, getter)) ? (
             getWhenCore(waiter.apply(data), getter.apply(data.object))
-        ) : DriverFunctionFactory.get(CoreDataConstants.DATA_WAS_NULL_OR_FALSE_STRING);
+        ) : DriverFunctionFactory.get(SeleniumDataConstants.DATA_WAS_NULL_OR_FALSE_STRING);
     }
 
     static DriverFunction<Boolean> sendKeys(LazyElement element, String input) {
@@ -97,15 +99,15 @@ public interface Element {
     }
 
     static DriverFunction<Boolean> sendKeys(Data<LazyElement> data, String input) {
-        return ifDriver("sendKeys", DataPredicates.isValidNonFalse(data), sendKeys(data.object, input), CoreDataConstants.NULL_BOOLEAN);
+        return ifDriver("sendKeys", DataPredicates.isValidNonFalse(data), sendKeys(data.OBJECT(), input), CoreDataConstants.NULL_BOOLEAN);
     }
 
     static DriverFunction<Boolean> click(Data<LazyElement> data) {
-        return ifDriver("click", DataPredicates.isValidNonFalse(data), click(data.object), CoreDataConstants.NULL_BOOLEAN);
+        return ifDriver("click", DataPredicates.isValidNonFalse(data), click(data.OBJECT()), CoreDataConstants.NULL_BOOLEAN);
     }
 
     static DriverFunction<Boolean> clear(Data<LazyElement> data) {
-        return ifDriver("clear", DataPredicates.isValidNonFalse(data), clear(data.object), CoreDataConstants.NULL_BOOLEAN);
+        return ifDriver("clear", DataPredicates.isValidNonFalse(data), clear(data.OBJECT()), CoreDataConstants.NULL_BOOLEAN);
     }
 
     static DriverFunction<Boolean> click(By locator, SingleGetter getter) {

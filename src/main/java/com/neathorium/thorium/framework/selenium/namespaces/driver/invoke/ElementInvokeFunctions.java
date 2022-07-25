@@ -1,5 +1,10 @@
 package com.neathorium.thorium.framework.selenium.namespaces.driver.invoke;
 
+import com.neathorium.thorium.core.data.constants.CoreDataConstants;
+import com.neathorium.thorium.core.data.namespaces.DataFunctions;
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.abstracts.reflection.BaseInvokerDefaultsData;
 import com.neathorium.thorium.framework.selenium.constants.MethodDefaults;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumCoreConstants;
@@ -7,34 +12,31 @@ import com.neathorium.thorium.framework.selenium.constants.SeleniumDataConstants
 import com.neathorium.thorium.framework.selenium.constants.SeleniumInvokeConstants;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumInvokeFunctionDefaults;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumMethodDefaults;
+import com.neathorium.thorium.framework.selenium.implementations.reflection.message.ParameterizedMessageData;
+import com.neathorium.thorium.framework.selenium.implementations.reflection.message.RegularMessageData;
+import com.neathorium.thorium.framework.selenium.namespaces.InvokerFunctions;
 import com.neathorium.thorium.framework.selenium.namespaces.SeleniumExecutor;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.factories.DriverFunctionFactory;
 import com.neathorium.thorium.framework.selenium.namespaces.validators.InvokeCoreValidator;
+import com.neathorium.thorium.framework.selenium.namespaces.validators.SeleniumFormatter;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
-import com.neathorium.thorium.core.constants.CoreDataConstants;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
-import com.neathorium.thorium.core.implementations.reflection.message.ParameterizedMessageData;
-import com.neathorium.thorium.core.implementations.reflection.message.RegularMessageData;
 import com.neathorium.thorium.core.namespaces.DataExecutionFunctions;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
-import com.neathorium.thorium.core.namespaces.DataFunctions;
-import com.neathorium.thorium.core.namespaces.InvokeFunctions;
-import com.neathorium.thorium.core.namespaces.predicates.DataPredicates;
-import com.neathorium.thorium.core.namespaces.repositories.MethodRepository;
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
-import com.neathorium.thorium.core.namespaces.validators.MethodParametersDataValidators;
-import com.neathorium.thorium.core.records.Data;
 import com.neathorium.thorium.core.records.HandleResultData;
-import com.neathorium.thorium.core.records.MethodData;
-import com.neathorium.thorium.core.records.MethodParametersData;
-import com.neathorium.thorium.core.records.reflection.InvokeMethodData;
-import com.neathorium.thorium.core.records.reflection.InvokerParameterizedParametersFieldData;
-import com.neathorium.thorium.core.records.reflection.message.InvokeCommonMessageParametersData;
 import com.neathorium.thorium.framework.core.namespaces.validators.FrameworkCoreFormatter;
 import com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore;
+import com.neathorium.thorium.framework.selenium.records.reflection.InvokerParameterizedParametersFieldData;
+import com.neathorium.thorium.framework.selenium.records.reflection.message.InvokeCommonMessageParametersData;
+import com.neathorium.thorium.framework.selenium.repositories.method.namespaces.MethodRepositoryFunctions;
+import com.neathorium.thorium.framework.selenium.repositories.method.namespaces.validators.MethodParametersDataValidators;
+import com.neathorium.thorium.framework.selenium.repositories.method.records.MethodData;
+import com.neathorium.thorium.framework.selenium.repositories.method.records.MethodParametersData;
+import com.neathorium.thorium.framework.selenium.repositories.method.records.reflection.InvokeMethodData;
+import com.neathorium.thorium.java.extensions.namespaces.ArrayFunctions;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
+import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
@@ -55,20 +57,20 @@ public interface ElementInvokeFunctions {
         ParameterType parameter
     ) {
         final var nameof = "invokeCore";
-        final var castData = defaults.castData;
-        final var methodData = data.object;
-        final var method = methodData.method;
-        final var function = castData.CASTER.compose(defaults.constructor.apply(handler).apply(method));
-        final var result = defaults.castHandler.apply(new HandleResultData<>(function, parameter, castData.DEFAULT_VALUE));
+        final var castData = defaults.CAST_DATA;
+        final var methodData = data.OBJECT();
+        final var method = methodData.METHOD();
+        final var function = castData.CASTER.compose(defaults.CONSTRUCTOR.apply(handler).apply(method));
+        final var result = defaults.CAST_HANDLER.apply(new HandleResultData<>(function, parameter, castData.DEFAULT_VALUE));
 
         final var status = DataPredicates.isValidNonFalse(result);
-        final var message = (CoreUtilities.isFalse(status)) ? (
+        final var message = (BooleanUtilities.isFalse(status)) ? (
             messageHandler
-                .apply(new InvokeCommonMessageParametersData(DataFunctions.getFormattedMessage(data), methodData.returnType, methodData.methodParameterTypes))
-                .apply(result.exception)
+                .apply(new InvokeCommonMessageParametersData(DataFunctions.getFormattedMessage(data), methodData.RETURN_TYPE(), methodData.METHOD_PARAMETER_TYPES()))
+                .apply(result.EXCEPTION())
         ) : DataFunctions.getFormattedMessage(result);
 
-        return DataFactoryFunctions.getWith(result.object, status, nameof, message, result.exception);
+        return DataFactoryFunctions.getWith(result.OBJECT(), status, nameof, message, result.EXCEPTION());
     }
 
     private static <HandlerType, ParameterType, ReturnType> Data<ReturnType> invoke(
@@ -78,7 +80,7 @@ public interface ElementInvokeFunctions {
         HandlerType handler,
         Data<ParameterType> parameter
     ) {
-        return invoke(data, defaults, messageHandler, handler, parameter.object);
+        return invoke(data, defaults, messageHandler, handler, parameter.OBJECT());
     }
 
     private static <ParameterType, HandlerType, ReturnType> Function<Data<ParameterType>, Data<ReturnType>> invoke(
@@ -121,14 +123,14 @@ public interface ElementInvokeFunctions {
 
 
     private static Data<WebElement> invokeGetElement(Data<SearchContext> context, By locator) {
-        if (DataPredicates.isInvalidOrFalse(context) || NullableFunctions.isNull(locator)) {
+        if (DataPredicates.isInvalidOrFalse(context) || NullablePredicates.isNull(locator)) {
             return SeleniumDataConstants.NULL_ELEMENT;
         }
 
-        final var methodData = MethodRepository.getMethod(SeleniumCoreConstants.DEFAULT_WEB_ELEMENT_METHOD_PARAMETERS, SeleniumMethodDefaults.FIND_ELEMENT);
-        final var handler = new InvokerParameterizedParametersFieldData<>(CoreUtilities.toSingleElementArray(locator), SeleniumInvokeFunctionDefaults.SEARCH_CONTEXT_SINGLE_PARAMETER);
-        final var messageHandler = new ParameterizedMessageData(locator.toString(), CoreFormatter::getInvokeMethodParameterizedMessageFunction);
-        return invoke("invokeGetElement", methodData, SeleniumInvokeFunctionDefaults.SEARCH_CONTEXT_PARAMETERS, messageHandler, handler, context.object);
+        final var methodData = MethodRepositoryFunctions.getMethod(SeleniumCoreConstants.DEFAULT_WEB_ELEMENT_METHOD_PARAMETERS, SeleniumMethodDefaults.FIND_ELEMENT);
+        final var handler = new InvokerParameterizedParametersFieldData<>(ArrayFunctions.toSingleElementArray(locator), SeleniumInvokeFunctionDefaults.SEARCH_CONTEXT_SINGLE_PARAMETER.validator, SeleniumInvokeFunctionDefaults.SEARCH_CONTEXT_SINGLE_PARAMETER.handler);
+        final var messageHandler = new ParameterizedMessageData(locator.toString(), SeleniumFormatter::getInvokeMethodParameterizedMessageFunction);
+        return invoke("invokeGetElement", methodData, SeleniumInvokeFunctionDefaults.SEARCH_CONTEXT_PARAMETERS, messageHandler, handler, context.OBJECT());
     }
 
     static Function<Data<SearchContext>, Data<WebElement>> invokeGetElement(By locator) {
@@ -145,10 +147,10 @@ public interface ElementInvokeFunctions {
             return driver -> DataFactoryFunctions.getInvalidWith(null, nameof, errorMessage);
         }
 
-        final var methodData = MethodRepository.getMethod(SeleniumCoreConstants.DEFAULT_WEB_ELEMENT_METHOD_PARAMETERS, parameterData);
-        final var messageHandler = new RegularMessageData(CoreFormatter::getInvokeMethodCommonMessageFunction);
-        final var result = invoke(nameof, methodData, SeleniumInvokeFunctionDefaults.VOID_REGULAR, messageHandler, InvokeFunctions::invoke, element.get());
-        return DriverFunctionFactory.prependMessage(result, parameterData.methodName + CoreFormatterConstants.COLON_SPACE);
+        final var methodData = MethodRepositoryFunctions.getMethod(SeleniumCoreConstants.DEFAULT_WEB_ELEMENT_METHOD_PARAMETERS, parameterData);
+        final var messageHandler = new RegularMessageData(SeleniumFormatter::getInvokeMethodCommonMessageFunction);
+        final var result = invoke(nameof, methodData, SeleniumInvokeFunctionDefaults.VOID_REGULAR, messageHandler, InvokerFunctions::invoke, element.get());
+        return DriverFunctionFactory.prependMessage(result, parameterData.METHOD_NAME() + CoreFormatterConstants.COLON_SPACE);
     }
 
     private static DriverFunction<Boolean> invokeElementBooleanMethod(LazyElement element, InvokeMethodData invokeData) {
@@ -161,10 +163,10 @@ public interface ElementInvokeFunctions {
             return driver -> DataFactoryFunctions.getInvalidWith(null, nameof, errorMessage);
         }
 
-        final var methodData = MethodRepository.getMethod(SeleniumCoreConstants.DEFAULT_WEB_ELEMENT_METHOD_PARAMETERS, parameterData);
-        final var messageHandler = new RegularMessageData(CoreFormatter::getInvokeMethodCommonMessageFunction);
-        final var result = invoke(nameof, methodData, SeleniumInvokeFunctionDefaults.BOOLEAN_REGULAR, messageHandler, InvokeFunctions::invoke, element.get());
-        return DriverFunctionFactory.prependMessage(result, parameterData.methodName + CoreFormatterConstants.COLON_SPACE);
+        final var methodData = MethodRepositoryFunctions.getMethod(SeleniumCoreConstants.DEFAULT_WEB_ELEMENT_METHOD_PARAMETERS, parameterData);
+        final var messageHandler = new RegularMessageData(SeleniumFormatter::getInvokeMethodCommonMessageFunction);
+        final var result = invoke(nameof, methodData, SeleniumInvokeFunctionDefaults.BOOLEAN_REGULAR, messageHandler, InvokerFunctions::invoke, element.get());
+        return DriverFunctionFactory.prependMessage(result, parameterData.METHOD_NAME() + CoreFormatterConstants.COLON_SPACE);
     }
 
     private static DriverFunction<String> invokeElementStringMethod(String name, LazyElement element, MethodParametersData parameterData) {
@@ -174,10 +176,10 @@ public interface ElementInvokeFunctions {
             return driver -> DataFactoryFunctions.getInvalidWith(null, nameof, errorMessage);
         }
 
-        final var methodData = MethodRepository.getMethod(SeleniumCoreConstants.DEFAULT_WEB_ELEMENT_METHOD_PARAMETERS, parameterData);
-        final var messageHandler = new RegularMessageData(CoreFormatter::getInvokeMethodCommonMessageFunction);
-        final var result = invoke(nameof, methodData, SeleniumInvokeFunctionDefaults.STRING_REGULAR, messageHandler, InvokeFunctions::invoke, element.get());
-        return DriverFunctionFactory.prependMessage(result, parameterData.methodName + CoreFormatterConstants.COLON_SPACE);
+        final var methodData = MethodRepositoryFunctions.getMethod(SeleniumCoreConstants.DEFAULT_WEB_ELEMENT_METHOD_PARAMETERS, parameterData);
+        final var messageHandler = new RegularMessageData(SeleniumFormatter::getInvokeMethodCommonMessageFunction);
+        final var result = invoke(nameof, methodData, SeleniumInvokeFunctionDefaults.STRING_REGULAR, messageHandler, InvokerFunctions::invoke, element.get());
+        return DriverFunctionFactory.prependMessage(result, parameterData.METHOD_NAME() + CoreFormatterConstants.COLON_SPACE);
     }
 
     private static DriverFunction<String> invokeElementStringMethod(String name, LazyElement element, String parameter, MethodParametersData parameterData) {
@@ -187,11 +189,11 @@ public interface ElementInvokeFunctions {
             return driver -> DataFactoryFunctions.getInvalidWith(null, nameof, errorMessage);
         }
 
-        final var methodData = MethodRepository.getMethod(SeleniumCoreConstants.DEFAULT_WEB_ELEMENT_METHOD_PARAMETERS, parameterData);
-        final var handler = new InvokerParameterizedParametersFieldData<>(CoreUtilities.toSingleElementArray(parameter, StringUtils::isNotBlank), SeleniumInvokeFunctionDefaults.SINGLE_PARAMETER);
-        final var messageHandler = new ParameterizedMessageData(parameter, CoreFormatter::getInvokeMethodParameterizedMessageFunction);
+        final var methodData = MethodRepositoryFunctions.getMethod(SeleniumCoreConstants.DEFAULT_WEB_ELEMENT_METHOD_PARAMETERS, parameterData);
+        final var handler = new InvokerParameterizedParametersFieldData<>(ArrayFunctions.toSingleElementArray(parameter, StringUtils::isNotBlank), SeleniumInvokeFunctionDefaults.SINGLE_PARAMETER.validator, SeleniumInvokeFunctionDefaults.SINGLE_PARAMETER.handler);
+        final var messageHandler = new ParameterizedMessageData(parameter, SeleniumFormatter::getInvokeMethodParameterizedMessageFunction);
         final var result = invoke(nameof, methodData, SeleniumInvokeFunctionDefaults.STRING_PARAMETERS, messageHandler, handler, element.get());
-        return DriverFunctionFactory.prependMessage(result, parameterData.methodName + CoreFormatterConstants.COLON_SPACE);
+        return DriverFunctionFactory.prependMessage(result, parameterData.METHOD_NAME() + CoreFormatterConstants.COLON_SPACE);
     }
 
     static DriverFunction<Boolean> isDisplayed(LazyElement element) {
@@ -247,10 +249,10 @@ public interface ElementInvokeFunctions {
         }
 
         final var methodParameterData = MethodDefaults.SEND_KEYS;
-        final var methodData = MethodRepository.getMethod(SeleniumCoreConstants.DEFAULT_WEB_ELEMENT_METHOD_PARAMETERS, methodParameterData);
-        final var handler = new InvokerParameterizedParametersFieldData<>(CoreUtilities.toSingleElementArray(new CharSequence[]{parameter}, NullableFunctions::isNotNull), SeleniumInvokeFunctionDefaults.SINGLE_PARAMETER);
-        final var messageHandler = new ParameterizedMessageData(parameter, CoreFormatter::getInvokeMethodParameterizedMessageFunction);
+        final var methodData = MethodRepositoryFunctions.getMethod(SeleniumCoreConstants.DEFAULT_WEB_ELEMENT_METHOD_PARAMETERS, methodParameterData);
+        final var handler = new InvokerParameterizedParametersFieldData<>(ArrayFunctions.toSingleElementArray(new CharSequence[]{parameter}, NullablePredicates::isNotNull), SeleniumInvokeFunctionDefaults.SINGLE_PARAMETER.validator, SeleniumInvokeFunctionDefaults.SINGLE_PARAMETER.handler);
+        final var messageHandler = new ParameterizedMessageData(parameter, SeleniumFormatter::getInvokeMethodParameterizedMessageFunction);
         final var result = invoke(nameof, methodData, SeleniumInvokeFunctionDefaults.VOID_PARAMETERS, messageHandler, handler, element.get());
-        return DriverFunctionFactory.prependMessage(result, methodParameterData.methodName + CoreFormatterConstants.COLON_SPACE);
+        return DriverFunctionFactory.prependMessage(result, methodParameterData.METHOD_NAME() + CoreFormatterConstants.COLON_SPACE);
     }
 }

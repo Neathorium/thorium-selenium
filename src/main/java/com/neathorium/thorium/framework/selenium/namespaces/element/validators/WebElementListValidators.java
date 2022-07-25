@@ -1,22 +1,22 @@
 package com.neathorium.thorium.framework.selenium.namespaces.element.validators;
 
+import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumCoreConstants;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumDataConstants;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.WebElementList;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
-import com.neathorium.thorium.core.extensions.namespaces.predicates.CollectionPredicates;
-import com.neathorium.thorium.core.namespaces.predicates.DataPredicates;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.CollectionPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.EqualsPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import org.openqa.selenium.WebElement;
 
 public interface WebElementListValidators {
     static boolean isInvalid(WebElementList list) {
         return (
-            NullableFunctions.isNull(list) ||
+            NullablePredicates.isNull(list) ||
             CollectionPredicates.isEmptyOrNotOfType(list, WebElement.class) ||
-            CoreUtilities.isEqual(SeleniumCoreConstants.NULL_ELEMENT_LIST, list) ||
-            CoreUtilities.isEqual(SeleniumCoreConstants.STOCK_ELEMENT, list.first())
+            EqualsPredicates.isEqual(SeleniumCoreConstants.NULL_ELEMENT_LIST, list) ||
+            EqualsPredicates.isEqual(SeleniumCoreConstants.STOCK_ELEMENT, list.first())
         );
     }
 
@@ -27,8 +27,8 @@ public interface WebElementListValidators {
     static boolean isInvalid(Data<WebElementList> data) {
         return (
             DataPredicates.isInvalidOrFalse(data) ||
-            CoreUtilities.isEqual(SeleniumDataConstants.NULL_LIST, data) ||
-            isInvalid(data.object)
+            EqualsPredicates.isEqual(SeleniumDataConstants.NULL_LIST, data) ||
+            isInvalid(data.OBJECT())
         );
     }
 

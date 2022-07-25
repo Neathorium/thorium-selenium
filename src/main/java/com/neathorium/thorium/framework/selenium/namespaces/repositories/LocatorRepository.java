@@ -1,5 +1,9 @@
 package com.neathorium.thorium.framework.selenium.namespaces.repositories;
 
+import com.neathorium.thorium.core.data.constants.CoreDataConstants;
+import com.neathorium.thorium.core.data.namespaces.DataFunctions;
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.constants.RepositoryConstants;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumDataConstants;
 import com.neathorium.thorium.framework.selenium.constants.validators.SeleniumFormatterConstants;
@@ -7,27 +11,23 @@ import com.neathorium.thorium.framework.selenium.enums.SingleGetter;
 import com.neathorium.thorium.framework.selenium.namespaces.factories.lazy.LazyElementFactory;
 import com.neathorium.thorium.framework.selenium.records.lazy.CachedLazyElementData;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
-import com.neathorium.thorium.core.constants.CoreDataConstants;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
-import com.neathorium.thorium.core.records.Data;
 import org.openqa.selenium.By;
 
 import java.util.Map;
 
-import static com.neathorium.thorium.core.namespaces.DataFactoryFunctions.replaceMessage;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public interface LocatorRepository {
 
     static Data<LazyElement> getIfContains(Map<By, String> locatorRepository, Map<String, CachedLazyElementData> elementRepository, By locator, SingleGetter getter) {
         final var nameof = "getIfContains";
-        final var element = locatorRepository.containsKey(locator) ? ElementRepository.getElement(locatorRepository.get(locator)).object.element : LazyElementFactory.getWithFilterParameters(locator, getter);
-        final var result = cacheLocator(locatorRepository, locator, element.name, CoreDataConstants.NULL_BOOLEAN);
-        final var status = result.object;
+        final var element = locatorRepository.containsKey(locator) ? ElementRepository.getElement(locatorRepository.get(locator)).OBJECT().element : LazyElementFactory.getWithFilterParameters(locator, getter);
+        final var result = cacheLocator(locatorRepository, locator, element.NAME, CoreDataConstants.NULL_BOOLEAN);
+        final var status = result.OBJECT();
         return status ?
-            DataFactoryFunctions.getWith(element, result.status, nameof, result.message.formatter.apply(result.message.nameof, result.message.message)) :
+            DataFactoryFunctions.getWith(element, result.STATUS(), nameof, DataFunctions.getFormattedMessage(result)) :
             DataFactoryFunctions.replaceMessage(SeleniumDataConstants.NULL_LAZY_ELEMENT, nameof, "Locator was " + CoreFormatter.getOptionMessage(status) + " found" + CoreFormatterConstants.END_LINE);
     }
 
@@ -46,7 +46,7 @@ public interface LocatorRepository {
     static Data<Boolean> cacheLocator(Map<By, String> locatorRepository, By locator, String name, Data<Boolean> defaultValue) {
         final var nameof = "cacheLocator";
         if (isBlank(name)) {
-            return replaceMessage(defaultValue, nameof, SeleniumFormatterConstants.LOCATOR + "with name " + CoreFormatterConstants.WAS_NULL);
+            return DataFactoryFunctions.replaceMessage(defaultValue, nameof, SeleniumFormatterConstants.LOCATOR + "with name " + CoreFormatterConstants.WAS_NULL);
         }
 
         if (locatorRepository.containsKey(locator)) {

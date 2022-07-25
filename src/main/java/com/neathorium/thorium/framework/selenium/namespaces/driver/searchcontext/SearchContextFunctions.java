@@ -1,9 +1,9 @@
 package com.neathorium.thorium.framework.selenium.namespaces.driver.searchcontext;
 
+import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.constants.FactoryConstants;
 import com.neathorium.thorium.framework.selenium.namespaces.driver.typeconversion.DriverTypeConversionFunctions;
-import com.neathorium.thorium.core.namespaces.predicates.DataPredicates;
-import com.neathorium.thorium.core.records.Data;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -15,7 +15,7 @@ public interface SearchContextFunctions {
 
     static <T extends SearchContext> Data<SearchContext> getSearchContextOf(String dependencyName, Data<T> data) {
         return DataPredicates.isValidNonFalse(data) ? (
-            DriverTypeConversionFunctions.getSubtypeOf(dependencyName, data.object, SearchContextFunctions::getSearchContextOf, FactoryConstants.NULL_SEARCH_CONTEXT)
+            DriverTypeConversionFunctions.getSubtypeOf(dependencyName, data.OBJECT(), SearchContextFunctions::getSearchContextOf, FactoryConstants.NULL_SEARCH_CONTEXT)
         ) : FactoryConstants.NULL_SEARCH_CONTEXT_DATA;
     }
 

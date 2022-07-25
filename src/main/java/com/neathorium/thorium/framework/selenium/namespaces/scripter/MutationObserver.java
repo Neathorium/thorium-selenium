@@ -1,5 +1,8 @@
 package com.neathorium.thorium.framework.selenium.namespaces.scripter;
 
+import com.neathorium.thorium.core.data.constants.CoreDataConstants;
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.constants.driver.devtools.DevtoolsViewConstants;
 import com.neathorium.thorium.framework.selenium.constants.scripter.DevtoolsConstants;
 import com.neathorium.thorium.framework.selenium.namespaces.Driver;
@@ -9,18 +12,13 @@ import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.D
 import com.neathorium.thorium.framework.selenium.namespaces.factories.DriverFunctionFactory;
 import com.neathorium.thorium.framework.selenium.namespaces.utilities.LazyElementUtilities;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
-import com.neathorium.thorium.core.constants.CoreDataConstants;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
 import com.neathorium.thorium.core.namespaces.DataExecutionFunctions;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
-import com.neathorium.thorium.core.records.Data;
 import com.neathorium.thorium.framework.core.namespaces.validators.FrameworkCoreFormatter;
+import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
 import org.openqa.selenium.WebDriver;
 
 import java.util.function.Function;
-
-import static com.neathorium.thorium.core.namespaces.DataExecutionFunctions.ifDependency;
 
 public interface MutationObserver {
     private static String getMutationObserverScript(String locator) {
@@ -52,26 +50,26 @@ public interface MutationObserver {
 
     private static Data<Boolean> isConsoleFocusedObserverSet(WebDriver driver) {
         final var result = Driver.execute(DevtoolsConstants.GUARD).apply(driver);
-        final var object = result.object instanceof String ? ((String) result.object).trim().replaceAll("\"", "") : CoreFormatterConstants.EMPTY;
+        final var object = result.OBJECT() instanceof String ? ((String) result.OBJECT()).trim().replaceAll("\"", "") : CoreFormatterConstants.EMPTY;
         final var status = Boolean.parseBoolean(object);
         final var message = "Observer was" + (status ? "" : "not") + " set" + CoreFormatterConstants.END_LINE;
-        return DataFactoryFunctions.getBoolean(status, "isConsoleFocusedObserverSet", message, result.exception);
+        return DataFactoryFunctions.getBoolean(status, "isConsoleFocusedObserverSet", message, result.EXCEPTION());
     }
 
     private static Data<Boolean> isConsoleFocusedCore(WebDriver driver) {
         final var result = Driver.execute(DevtoolsConstants.CONSOLE_FOCUSED_CHECK).apply(driver);
-        final var status = CoreUtilities.castToBoolean(result.object);
+        final var status = BooleanUtilities.castToBoolean(result.OBJECT());
         final var message = "Console was" + (status ? "" : "not") + " focused" + CoreFormatterConstants.END_LINE;
-        return DataFactoryFunctions.getBoolean(status, "isConsoleFocused", message, result.exception);
+        return DataFactoryFunctions.getBoolean(status, "isConsoleFocused", message, result.EXCEPTION());
     }
 
     private static Data<Boolean> setConsoleFocusedFunctionCore(WebDriver driver, LazyElement element) {
         final var locator = LazyElementUtilities.getCSSSelectorFromElement(element);
         final var script = getMutationObserverScript(locator);
         final var result = Driver.execute(script).apply(driver);
-        final var status = CoreUtilities.castToBoolean(result.object);
+        final var status = BooleanUtilities.castToBoolean(result.OBJECT());
         final var message = "Observer was" + (status ? "" : "not") + " set" + CoreFormatterConstants.END_LINE;
-        return DataFactoryFunctions.getBoolean(status, message, result.exception);
+        return DataFactoryFunctions.getBoolean(status, message, result.EXCEPTION());
     }
 
     private static Function<WebDriver, Data<Boolean>> setConsoleFocusedFunctionCore(LazyElement element) {

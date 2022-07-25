@@ -1,8 +1,8 @@
 package com.neathorium.thorium.framework.selenium.drivers;
 
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumDataConstants;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
@@ -17,12 +17,12 @@ public class DriverFactory {
         defaultId = "0";
 
     private static WebDriver getDriverObject(Data<WebDriver> data) {
-        return (data.status ? data : SeleniumDataConstants.NULL_DRIVER).object;
+        return (data.STATUS() ? data : SeleniumDataConstants.NULL_DRIVER).OBJECT();
     }
 
     public static WebDriver get() {
         System.setProperty("webdriver.chrome.driver", "D:/chromedriver.exe");
-        if (NullableFunctions.isNull(driver)) {
+        if (NullablePredicates.isNull(driver)) {
             driver = new ChromeDriver();
         }
 

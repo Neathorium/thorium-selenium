@@ -1,5 +1,8 @@
 package com.neathorium.thorium.framework.selenium.records.expectedcondition.regular;
 
+import com.neathorium.thorium.core.data.constants.CoreDataConstants;
+import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.constants.DriverFunctionConstants;
 import com.neathorium.thorium.framework.selenium.constants.ElementFinderConstants;
 import com.neathorium.thorium.framework.selenium.enums.SingleGetter;
@@ -12,12 +15,9 @@ import com.neathorium.thorium.framework.selenium.records.ActionWhenData;
 import com.neathorium.thorium.framework.selenium.records.element.ElementFunctionsData;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElementWaitParameters;
-import com.neathorium.thorium.core.constants.CoreDataConstants;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.extensions.interfaces.functional.TriFunction;
-import com.neathorium.thorium.core.namespaces.predicates.DataPredicates;
-import com.neathorium.thorium.core.records.Data;
 import com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore;
+import com.neathorium.thorium.java.extensions.interfaces.functional.TriFunction;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -46,11 +46,11 @@ public class ElementAlternative {
     }
 
     public DriverFunction<Boolean> clickWhenCore(Data<LazyElement> data, DriverFunction<Boolean> condition) {
-        return ExecutionCore.ifDriver("clickWhenCore", DataPredicates.isValidNonFalse(data), clickWhenCore(data.object, condition), CoreDataConstants.NULL_BOOLEAN);
+        return ExecutionCore.ifDriver("clickWhenCore", DataPredicates.isValidNonFalse(data), clickWhenCore(data.OBJECT(), condition), CoreDataConstants.NULL_BOOLEAN);
     }
 
     public DriverFunction<Boolean> clearWhenCore(Data<LazyElement> data, DriverFunction<Boolean> condition) {
-        return ExecutionCore.ifDriver("clearWhenCore", DataPredicates.isValidNonFalse(data), clearWhenCore(data.object, condition), CoreDataConstants.NULL_BOOLEAN);
+        return ExecutionCore.ifDriver("clearWhenCore", DataPredicates.isValidNonFalse(data), clearWhenCore(data.OBJECT(), condition), CoreDataConstants.NULL_BOOLEAN);
     }
 
     public DriverFunction<Boolean> clickWhenCore(By locator, Function<By, DriverFunction<Boolean>> condition, SingleGetter getter) {
@@ -81,7 +81,7 @@ public class ElementAlternative {
         return ExecutionCore.ifDriver(
             "inputWhenCore",
             DataPredicates.isValidNonFalse(data),
-            inputWhenCore(new ActionWhenData<>(condition.apply(data.object), sender.apply(data.object, input))),
+            inputWhenCore(new ActionWhenData<>(condition.apply(data.OBJECT()), sender.apply(data.OBJECT(), input))),
             CoreDataConstants.NULL_BOOLEAN
         );
     }
@@ -129,7 +129,7 @@ public class ElementAlternative {
         Function<LazyElement, DriverFunction<Boolean>> condition,
         BiFunction<LazyElement, String, DriverFunction<Boolean>> sender
     ) {
-        return DriverFunctionFactory.prependMessage(inputWhenCore(new ActionWhenData<>(condition.apply(data), sender.apply(data, input))), CoreFormatterConstants.ELEMENT + data.name);
+        return DriverFunctionFactory.prependMessage(inputWhenCore(new ActionWhenData<>(condition.apply(data), sender.apply(data, input))), CoreFormatterConstants.ELEMENT + data.NAME);
     }
 
     public DriverFunction<Boolean> clickWhenCore(LazyElementWaitParameters data, Function<LazyElementWaitParameters, DriverFunction<Boolean>> condition) {
@@ -151,7 +151,7 @@ public class ElementAlternative {
         }
 
         final var object = data.object;
-        return DriverFunctionFactory.prependMessage(Element.actionWhenCore(new ActionWhenData<>(action.apply(data), sender.apply(object, input))), CoreFormatterConstants.ELEMENT + object.name);
+        return DriverFunctionFactory.prependMessage(Element.actionWhenCore(new ActionWhenData<>(action.apply(data), sender.apply(object, input))), CoreFormatterConstants.ELEMENT + object.NAME);
     }
 
 
@@ -236,43 +236,43 @@ public class ElementAlternative {
     }
 
     public DriverFunction<Boolean> inputWhenPresent(By locator, String input, SingleGetter getter) {
-        return inputWhenCore(new ActionWhenData<>(clickWhenPresent(locator, getter), functionData.sendKeysData.sendKeysByWithGetter.apply(locator, input, getter)));
+        return inputWhenCore(new ActionWhenData<>(clickWhenPresent(locator, getter), functionData.sendKeysData.SEND_KEYS_BY_WITH_GETTER.apply(locator, input, getter)));
     }
 
     public DriverFunction<Boolean> inputWhenDisplayed(By locator, String input, SingleGetter getter) {
-        return inputWhenCore(new ActionWhenData<>(clickWhenDisplayed(locator, getter), functionData.sendKeysData.sendKeysByWithGetter.apply(locator, input, getter)));
+        return inputWhenCore(new ActionWhenData<>(clickWhenDisplayed(locator, getter), functionData.sendKeysData.SEND_KEYS_BY_WITH_GETTER.apply(locator, input, getter)));
     }
 
     public DriverFunction<Boolean> inputWhenEnabled(By locator, String input, SingleGetter getter) {
-        return inputWhenCore(new ActionWhenData<>(clickWhenEnabled(locator, getter), functionData.sendKeysData.sendKeysByWithGetter.apply(locator, input, getter)));
+        return inputWhenCore(new ActionWhenData<>(clickWhenEnabled(locator, getter), functionData.sendKeysData.SEND_KEYS_BY_WITH_GETTER.apply(locator, input, getter)));
     }
 
     public DriverFunction<Boolean> inputWhenSelected(By locator, String input, SingleGetter getter) {
-        return inputWhenCore(new ActionWhenData<>(clickWhenSelected(locator, getter), functionData.sendKeysData.sendKeysByWithGetter.apply(locator, input, getter)));
+        return inputWhenCore(new ActionWhenData<>(clickWhenSelected(locator, getter), functionData.sendKeysData.SEND_KEYS_BY_WITH_GETTER.apply(locator, input, getter)));
     }
 
     public DriverFunction<Boolean> inputWhenClickable(By locator, String input, SingleGetter getter) {
-        return inputWhenCore(new ActionWhenData<>(clickWhenClickable(locator, getter), functionData.sendKeysData.sendKeysByWithGetter.apply(locator, input, getter)));
+        return inputWhenCore(new ActionWhenData<>(clickWhenClickable(locator, getter), functionData.sendKeysData.SEND_KEYS_BY_WITH_GETTER.apply(locator, input, getter)));
     }
 
     public DriverFunction<Boolean> inputWhenPresent(By locator, String input) {
-        return inputWhenCore(new ActionWhenData<>(clickWhenPresent(locator), functionData.sendKeysData.sendKeysBy.apply(locator, input)));
+        return inputWhenCore(new ActionWhenData<>(clickWhenPresent(locator), functionData.sendKeysData.SEND_KEYS_BY.apply(locator, input)));
     }
 
     public DriverFunction<Boolean> inputWhenDisplayed(By locator, String input) {
-        return inputWhenCore(new ActionWhenData<>(clickWhenDisplayed(locator), functionData.sendKeysData.sendKeysBy.apply(locator, input)));
+        return inputWhenCore(new ActionWhenData<>(clickWhenDisplayed(locator), functionData.sendKeysData.SEND_KEYS_BY.apply(locator, input)));
     }
 
     public DriverFunction<Boolean> inputWhenEnabled(By locator, String input) {
-        return inputWhenCore(new ActionWhenData<>(clickWhenEnabled(locator), functionData.sendKeysData.sendKeysBy.apply(locator, input)));
+        return inputWhenCore(new ActionWhenData<>(clickWhenEnabled(locator), functionData.sendKeysData.SEND_KEYS_BY.apply(locator, input)));
     }
 
     public DriverFunction<Boolean> inputWhenSelected(By locator, String input) {
-        return inputWhenCore(new ActionWhenData<>(clickWhenSelected(locator), functionData.sendKeysData.sendKeysBy.apply(locator, input)));
+        return inputWhenCore(new ActionWhenData<>(clickWhenSelected(locator), functionData.sendKeysData.SEND_KEYS_BY.apply(locator, input)));
     }
 
     public DriverFunction<Boolean> inputWhenClickable(By locator, String input) {
-        return inputWhenCore(new ActionWhenData<>(clickWhenClickable(locator), functionData.sendKeysData.sendKeysBy.apply(locator, input)));
+        return inputWhenCore(new ActionWhenData<>(clickWhenClickable(locator), functionData.sendKeysData.SEND_KEYS_BY.apply(locator, input)));
     }
 
     public DriverFunction<Boolean> clickWhenPresent(LazyElement element) {
@@ -296,23 +296,23 @@ public class ElementAlternative {
     }
 
     public DriverFunction<Boolean> inputWhenPresent(LazyElement data, String input) {
-        return inputWhenCore(data, input, this::clickWhenPresent, functionData.sendKeysData.sendKeysLazy);
+        return inputWhenCore(data, input, this::clickWhenPresent, functionData.sendKeysData.SEND_KEYS_LAZY);
     }
 
     public DriverFunction<Boolean> inputWhenDisplayed(LazyElement data, String input) {
-        return inputWhenCore(data, input, this::clickWhenDisplayed, functionData.sendKeysData.sendKeysLazy);
+        return inputWhenCore(data, input, this::clickWhenDisplayed, functionData.sendKeysData.SEND_KEYS_LAZY);
     }
 
     public DriverFunction<Boolean> inputWhenEnabled(LazyElement data, String input) {
-        return inputWhenCore(data, input, this::clickWhenEnabled, functionData.sendKeysData.sendKeysLazy);
+        return inputWhenCore(data, input, this::clickWhenEnabled, functionData.sendKeysData.SEND_KEYS_LAZY);
     }
 
     public DriverFunction<Boolean> inputWhenSelected(LazyElement data, String input) {
-        return inputWhenCore(data, input, this::clickWhenSelected, functionData.sendKeysData.sendKeysLazy);
+        return inputWhenCore(data, input, this::clickWhenSelected, functionData.sendKeysData.SEND_KEYS_LAZY);
     }
 
     public DriverFunction<Boolean> inputWhenClickable(LazyElement data, String input) {
-        return inputWhenCore(data, input, this::clickWhenClickable, functionData.sendKeysData.sendKeysLazy);
+        return inputWhenCore(data, input, this::clickWhenClickable, functionData.sendKeysData.SEND_KEYS_LAZY);
     }
 
     public DriverFunction<Boolean> clearWhenPresent(LazyElement data) {
@@ -356,23 +356,23 @@ public class ElementAlternative {
     }
 
     public DriverFunction<Boolean> inputWhenPresent(LazyElementWaitParameters data, String input) {
-        return inputWhenCore(data, input, this::clickWhenPresent, functionData.sendKeysData.sendKeysLazy);
+        return inputWhenCore(data, input, this::clickWhenPresent, functionData.sendKeysData.SEND_KEYS_LAZY);
     }
 
     public DriverFunction<Boolean> inputWhenDisplayed(LazyElementWaitParameters data, String input) {
-        return inputWhenCore(data, input, this::clickWhenDisplayed, functionData.sendKeysData.sendKeysLazy);
+        return inputWhenCore(data, input, this::clickWhenDisplayed, functionData.sendKeysData.SEND_KEYS_LAZY);
     }
 
     public DriverFunction<Boolean> inputWhenEnabled(LazyElementWaitParameters data, String input) {
-        return inputWhenCore(data, input, this::clickWhenEnabled, functionData.sendKeysData.sendKeysLazy);
+        return inputWhenCore(data, input, this::clickWhenEnabled, functionData.sendKeysData.SEND_KEYS_LAZY);
     }
 
     public DriverFunction<Boolean> inputWhenSelected(LazyElementWaitParameters data, String input) {
-        return inputWhenCore(data, input, this::clickWhenSelected, functionData.sendKeysData.sendKeysLazy);
+        return inputWhenCore(data, input, this::clickWhenSelected, functionData.sendKeysData.SEND_KEYS_LAZY);
     }
 
     public DriverFunction<Boolean> inputWhenClickable(LazyElementWaitParameters data, String input) {
-        return inputWhenCore(data, input, this::clickWhenClickable, functionData.sendKeysData.sendKeysLazy);
+        return inputWhenCore(data, input, this::clickWhenClickable, functionData.sendKeysData.SEND_KEYS_LAZY);
     }
 
     public DriverFunction<Boolean> clearWhenPresent(LazyElementWaitParameters data) {

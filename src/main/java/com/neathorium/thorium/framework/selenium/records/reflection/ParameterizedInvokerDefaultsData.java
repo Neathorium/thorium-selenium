@@ -1,11 +1,10 @@
 package com.neathorium.thorium.framework.selenium.records.reflection;
 
-import com.neathorium.thorium.core.extensions.interfaces.functional.boilers.MethodFunction;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.core.records.HandleResultData;
 import com.neathorium.thorium.core.records.caster.BasicCastData;
 import com.neathorium.thorium.framework.selenium.abstracts.reflection.BaseInvokerDefaultsData;
-import com.neathorium.thorium.core.records.reflection.InvokerParameterizedParametersFieldData;
+import com.neathorium.thorium.framework.selenium.interfaces.MethodFunction;
 
 import java.util.function.Function;
 import java.util.function.Predicate;

@@ -1,11 +1,11 @@
 package com.neathorium.thorium.framework.selenium.namespaces.validators;
 
+import com.neathorium.thorium.core.data.constants.CoreDataConstants;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.namespaces.element.validators.WebElementValidators;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
-import com.neathorium.thorium.core.constants.CoreDataConstants;
 import com.neathorium.thorium.core.namespaces.DataExecutionFunctions;
-import com.neathorium.thorium.core.records.Data;
 import com.neathorium.thorium.framework.core.namespaces.validators.FrameworkCoreFormatter;
 import com.neathorium.thorium.framework.selenium.namespaces.factories.DriverFunctionFactory;
 import org.openqa.selenium.WebElement;

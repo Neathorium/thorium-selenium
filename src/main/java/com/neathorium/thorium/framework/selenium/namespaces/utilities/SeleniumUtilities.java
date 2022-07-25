@@ -1,5 +1,8 @@
 package com.neathorium.thorium.framework.selenium.namespaces.utilities;
 
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.abstracts.AbstractWaitParameters;
 import com.neathorium.thorium.framework.selenium.constants.ElementStrategyMapConstants;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumDataConstants;
@@ -13,15 +16,15 @@ import com.neathorium.thorium.framework.selenium.records.lazy.LazyElementWaitPar
 import com.neathorium.thorium.framework.selenium.records.lazy.filtered.ElementFilterData;
 import com.neathorium.thorium.framework.selenium.records.lazy.filtered.LazyFilteredElementParameters;
 import com.neathorium.thorium.core.constants.CoreConstants;
-import com.neathorium.thorium.core.extensions.namespaces.EmptiableFunctions;
-import com.neathorium.thorium.core.extensions.namespaces.predicates.BasicPredicates;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
-import com.neathorium.thorium.core.namespaces.predicates.DataPredicates;
-import com.neathorium.thorium.core.records.Data;
 import com.neathorium.thorium.framework.core.abstracts.AbstractLazyResult;
 import com.neathorium.thorium.framework.core.namespaces.extensions.boilers.LazyLocatorList;
 import com.neathorium.thorium.framework.core.namespaces.factory.LazyLocatorListFactory;
 import com.neathorium.thorium.framework.core.records.lazy.LazyLocator;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.BasicPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.EmptiablePredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.EqualsPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.GuardPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import org.apache.commons.lang3.ArrayUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -35,10 +38,6 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static com.neathorium.thorium.core.extensions.namespaces.CoreUtilities.areAll;
-import static com.neathorium.thorium.core.extensions.namespaces.CoreUtilities.areAny;
-import static com.neathorium.thorium.core.extensions.namespaces.CoreUtilities.areAnyNull;
-import static com.neathorium.thorium.core.extensions.namespaces.CoreUtilities.isEqual;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -53,7 +52,7 @@ public interface SeleniumUtilities {
     }
 
     static boolean areNullLazyLocators(LazyLocator... data) {
-        return areAll(SeleniumUtilities::isInvalidLazyLocator, data);
+        return GuardPredicates.areAll(SeleniumUtilities::isInvalidLazyLocator, data);
     }
 
     static LazyLocator[] getEmptyLazyLocatorArray() {
@@ -65,7 +64,7 @@ public interface SeleniumUtilities {
     }
 
     static boolean isNullLazyDataList(LazyLocatorList list) {
-        return EmptiableFunctions.isNullOrEmpty(list) || areNullLazyLocators(list.list);
+        return EmptiablePredicates.isNullOrEmpty(list) || areNullLazyLocators(list.list);
     }
 
     static boolean isNotNullLazyLocator(LazyLocator data) {
@@ -85,10 +84,10 @@ public interface SeleniumUtilities {
     static <T> boolean isNullLazyElement(AbstractLazyResult<T> element) {
         return (
             isNull(element) ||
-            isBlank(element.name) ||
-            areAnyNull(element.parameters, element.validator) ||
-            element.parameters.isEmpty() ||
-            isNullAbstractLazyElementParametersList(element.parameters.values(), element.validator)
+            isBlank(element.NAME) ||
+            NullablePredicates.areAnyNull(element.PARAMETERS, element.VALIDATOR) ||
+            element.PARAMETERS.isEmpty() ||
+            isNullAbstractLazyElementParametersList(element.PARAMETERS.values(), element.VALIDATOR)
         );
     }
 
@@ -99,8 +98,8 @@ public interface SeleniumUtilities {
     static boolean isNullWebElement(WebElement element) {
         return (
             isNull(element) ||
-            Objects.equals(SeleniumDataConstants.NULL_ELEMENT.object, element) ||
-            isEqual(element.getAttribute("id"), SeleniumFormatterConstants.NULL_ELEMENT_ID)
+            Objects.equals(SeleniumDataConstants.NULL_ELEMENT.OBJECT(), element) ||
+            EqualsPredicates.isEqual(element.getAttribute("id"), SeleniumFormatterConstants.NULL_ELEMENT_ID)
         );
     }
 
@@ -109,7 +108,7 @@ public interface SeleniumUtilities {
     }
 
     static boolean isNullWebElement(Data<WebElement> element) {
-        return DataPredicates.isInvalidOrFalse(element) || Objects.equals(SeleniumDataConstants.NULL_ELEMENT, element) || isNullWebElement(element.object);
+        return DataPredicates.isInvalidOrFalse(element) || Objects.equals(SeleniumDataConstants.NULL_ELEMENT, element) || isNullWebElement(element.OBJECT());
     }
 
     static boolean isNotNullWebElement(Data<WebElement> element) {
@@ -117,7 +116,7 @@ public interface SeleniumUtilities {
     }
 
     static <T> boolean isNullCommonWaitParametersData(AbstractWaitParameters<T> data) {
-        return isNull(data) || areAny(BasicPredicates::isNegative, data.duration, data.interval);
+        return isNull(data) || GuardPredicates.areAny(BasicPredicates::isNegative, data.duration, data.interval);
     }
 
     static boolean isNullElementWaitParametersData(ElementWaitParameters data) {
@@ -172,6 +171,6 @@ public interface SeleniumUtilities {
     }
 
     static Object[] unwrapToArray(Data<?> data) {
-        return DataPredicates.isValidNonFalse(data) ? ArrayUtils.toArray(data.object) : CoreConstants.EMPTY_OBJECT_ARRAY;
+        return DataPredicates.isValidNonFalse(data) ? ArrayUtils.toArray(data.OBJECT()) : CoreConstants.EMPTY_OBJECT_ARRAY;
     }
 }

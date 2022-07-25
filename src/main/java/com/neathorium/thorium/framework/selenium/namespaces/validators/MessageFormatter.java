@@ -1,10 +1,10 @@
 package com.neathorium.thorium.framework.selenium.namespaces.validators;
 
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumCoreConstants;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.WebElementList;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
-import com.neathorium.thorium.core.records.Data;
 import org.openqa.selenium.WebElement;
 
 import java.util.function.Function;

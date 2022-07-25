@@ -1,20 +1,22 @@
 package com.neathorium.thorium.framework.selenium.namespaces;
 
+import com.neathorium.thorium.core.data.constants.CoreDataConstants;
+import com.neathorium.thorium.core.data.namespaces.DataFunctions;
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.constants.ExpectedConditionConstants;
 import com.neathorium.thorium.framework.selenium.constants.validators.SeleniumFormatterConstants;
 import com.neathorium.thorium.framework.selenium.namespaces.driver.properties.DriverPropertyFunctions;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.validators.SeleniumFormatter;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
-import com.neathorium.thorium.core.constants.CoreDataConstants;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
-import com.neathorium.thorium.core.extensions.namespaces.predicates.BasicPredicates;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
-import com.neathorium.thorium.core.namespaces.StringUtilities;
-import com.neathorium.thorium.core.namespaces.predicates.DataPredicates;
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.BasicPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.EqualsPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
+import com.neathorium.thorium.java.extensions.namespaces.utilities.StringUtilities;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -24,29 +26,28 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore.ifDriver;
-import static com.neathorium.thorium.core.namespaces.predicates.DataPredicates.isInvalidOrFalse;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public interface ExpectedConditions {
     private static Data<Boolean> isValuesDataCore(Data<String> data, String expected, String descriptor, String conditionDescriptor) {
-        final var status = data.status;
+        final var status = data.STATUS();
         final var messageData = SeleniumFormatter.getIsValuesMessage(CoreFormatterConstants.isMessageMap, data, expected, status, descriptor, conditionDescriptor);
-        return DataFactoryFunctions.getBoolean(status, messageData.message.formatter.apply(messageData.message.nameof, messageData.message.message));
+        return DataFactoryFunctions.getBoolean(status, DataFunctions.getFormattedMessage(messageData));
     }
 
     private static Data<Boolean> isNumberOfWindowsEqualToCore(Data<Integer> handleData, int expected) {
-        final var count = handleData.object;
+        final var count = handleData.OBJECT();
         final var status = Objects.equals(count, expected);
         return DataFactoryFunctions.getBoolean(status, SeleniumFormatter.getNumberOfWindowsEqualToMessage(status, expected, count));
     }
 
     private static <T, V> Data<T> is(Data<T> data, T expected, BiFunction<T, T, V> checker) {
-        if (isInvalidOrFalse(data) || CoreUtilities.areAnyNull(expected, checker)) {
+        if (DataPredicates.isInvalidOrFalse(data) || NullablePredicates.areAnyNull(expected, checker)) {
             return DataFactoryFunctions.getWith(null, false, CoreFormatterConstants.PARAMETER_ISSUES);
         }
 
-        final var object = data.object;
-        var status = data.status;
+        final var object = data.OBJECT();
+        var status = data.STATUS();
         final var result = status ? object : expected;
         status = status && (Boolean) checker.apply(object, expected);
         return DataFactoryFunctions.getWith(result, status, "Checker with value(\"" + result + "\") against expected(\"" + expected + "\") was " + status + CoreFormatterConstants.END_LINE);
@@ -63,15 +64,15 @@ public interface ExpectedConditions {
     private static <T, V> DriverFunction<T> is(DriverFunction<T> getter, T expected, BiFunction<T, T, V> checker) {
         final var nameof = "is";
         final var negative = DataFactoryFunctions.getInvalidWith(expected, nameof, "expected guard");
-        return ifDriver(nameof, CoreUtilities.areNotNull(expected, getter, checker), ExecutionCore.validChain(getter, is(expected, checker), negative), negative);
+        return ifDriver(nameof, NullablePredicates.areNotNull(expected, getter, checker), ExecutionCore.validChain(getter, is(expected, checker), negative), negative);
     }
 
     static Data<Boolean> isValuesData(String descriptor, String expected, Data<String> data, BiFunction<String, String, Boolean> checker, String conditionDescriptor) {
         final var nameof = "isValuesData";
         return (
             DataPredicates.isValidNonFalse(data) &&
-            CoreUtilities.areNotNull(expected, checker) &&
-            CoreUtilities.areNotBlank(descriptor, conditionDescriptor)
+            NullablePredicates.areNotNull(expected, checker) &&
+            StringUtilities.areNotBlank(descriptor, conditionDescriptor)
         ) ? (
             DataFactoryFunctions.replaceName(isValuesDataCore(is(data, expected, checker), expected, descriptor, conditionDescriptor), nameof)
         ) : DataFactoryFunctions.replaceMessage(CoreDataConstants.NULL_BOOLEAN, nameof, CoreFormatterConstants.PARAMETER_ISSUES);
@@ -81,14 +82,14 @@ public interface ExpectedConditions {
         final var nameof = "isValuesData";
         return ifDriver(
             nameof,
-            CoreUtilities.areNotNull(expected, getter, checker) && CoreUtilities.areNotBlank(descriptor, conditionDescriptor),
+            NullablePredicates.areNotNull(expected, getter, checker) && StringUtilities.areNotBlank(descriptor, conditionDescriptor),
             driver -> isValuesDataCore(is(getter, expected, checker).apply(driver), expected, descriptor, conditionDescriptor),
             DataFactoryFunctions.replaceMessage(CoreDataConstants.NULL_BOOLEAN, nameof, "Expected was: \"" + expected +"\" and actual was: \"" + getter + CoreFormatterConstants.END_LINE)
         );
     }
 
     static Data<Boolean> isValuesEqualData(Data<String> data, String expected, String descriptor) {
-        return isValuesData(descriptor, expected, data, CoreUtilities::isEqual, "equal");
+        return isValuesData(descriptor, expected, data, EqualsPredicates::isEqual, "equal");
     }
 
     static Data<Boolean> isStartsWith(Data<String> data, String expected, String descriptor) {
@@ -100,7 +101,7 @@ public interface ExpectedConditions {
     }
 
     static Data<Boolean> isValuesNotEqualData(Data<String> data, String expected, String descriptor) {
-        return isValuesData(descriptor, expected, data, CoreUtilities::isNotEqual, "unequal");
+        return isValuesData(descriptor, expected, data, EqualsPredicates::isNotEqual, "unequal");
     }
 
     static Data<Boolean> isStringNotContainsExpectedData(Data<String> data, String expected, String descriptor) {
@@ -108,7 +109,7 @@ public interface ExpectedConditions {
     }
 
     static DriverFunction<Boolean> isValuesEqualData(DriverFunction<String> getter, String expected, String descriptor) {
-        return isValuesData(descriptor, expected, getter, CoreUtilities::isEqual, "equal");
+        return isValuesData(descriptor, expected, getter, EqualsPredicates::isEqual, "equal");
     }
 
     static DriverFunction<Boolean> isStartsWith(DriverFunction<String> getter, String expected, String descriptor) {
@@ -116,7 +117,7 @@ public interface ExpectedConditions {
     }
 
     static DriverFunction<Boolean> isValuesNotEqualData(DriverFunction<String> getter, String expected, String descriptor) {
-        return isValuesData(descriptor, expected, getter, CoreUtilities::isNotEqual, "unequal");
+        return isValuesData(descriptor, expected, getter, EqualsPredicates::isNotEqual, "unequal");
     }
 
     static DriverFunction<Boolean> isContainsExpectedData(DriverFunction<String> getter, String expected, String descriptor) {
@@ -164,7 +165,7 @@ public interface ExpectedConditions {
     }
 
     static DriverFunction<Boolean> isUrlMatchesData(String pattern) {
-        return isUrlData(CoreUtilities::isStringMatchesPattern, pattern, "match regex");
+        return isUrlData(StringUtilities::isStringMatchesPattern, pattern, "match regex");
     }
 
     static DriverFunction<Boolean> isElementPresent(LazyElement data) {
@@ -281,11 +282,11 @@ public interface ExpectedConditions {
     }
 
     static Function<WebDriver, Boolean> isTitleEquals(String expected) {
-        return driver -> isTitleEqualsData(expected).apply(driver).status;
+        return driver -> isTitleEqualsData(expected).apply(driver).STATUS();
     }
 
     static Function<WebDriver, Boolean> isTitleContains(String expected) {
-        return driver -> isTitleContainsData(expected).apply(driver).status;
+        return driver -> isTitleContainsData(expected).apply(driver).STATUS();
     }
 
     static DriverFunction<Boolean> isElementTextEqualData(LazyElement data, String expected) {

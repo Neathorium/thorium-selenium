@@ -1,15 +1,13 @@
 package com.neathorium.thorium.framework.selenium.namespaces;
 
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.namespaces.executor.SeleniumExecutorUtilities;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.factories.DriverFunctionFactory;
 import com.neathorium.thorium.core.constants.CoreConstants;
 import com.neathorium.thorium.core.constants.ExecutorConstants;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.extensions.interfaces.functional.QuadFunction;
-import com.neathorium.thorium.core.extensions.interfaces.functional.TriPredicate;
-import com.neathorium.thorium.core.extensions.interfaces.functional.boilers.IGetMessage;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
 import com.neathorium.thorium.core.namespaces.executor.ExecutionParametersDataFactory;
 import com.neathorium.thorium.core.namespaces.executor.ExecutionResultDataFactory;
 import com.neathorium.thorium.core.namespaces.executor.ExecutionStateDataFactory;
@@ -17,11 +15,13 @@ import com.neathorium.thorium.core.namespaces.executor.ExecutionStepsDataFactory
 import com.neathorium.thorium.core.namespaces.executor.Executor;
 import com.neathorium.thorium.core.namespaces.executor.ExecutorFunctionDataFactory;
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
-import com.neathorium.thorium.core.records.Data;
 import com.neathorium.thorium.core.records.executor.ExecutionParametersData;
 import com.neathorium.thorium.core.records.executor.ExecutionResultData;
 import com.neathorium.thorium.core.records.executor.ExecutionStateData;
 import com.neathorium.thorium.core.records.executor.ExecutionStepsData;
+import com.neathorium.thorium.java.extensions.interfaces.functional.QuadFunction;
+import com.neathorium.thorium.java.extensions.interfaces.functional.TriPredicate;
+import com.neathorium.thorium.java.extensions.interfaces.functional.boilers.IGetMessage;
 import org.openqa.selenium.WebDriver;
 
 import java.util.function.Function;
@@ -53,7 +53,7 @@ public interface SeleniumExecutor {
         ExecutionParametersData<Function<WebDriver, Data<?>>, DriverFunction<ExecutionResultData<ReturnType>>> execution
     ) {
         final var result = execute(execution, ExecutionStateDataFactory.getWithDefaults(), stepsData.steps).apply(stepsData.dependency);
-        return DataFactoryFunctions.replaceObject(result, result.object.result);
+        return DataFactoryFunctions.replaceObject(result, result.OBJECT().result);
     }
 
     private static <ReturnType> DriverFunction<ReturnType> executeData(

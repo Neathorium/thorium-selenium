@@ -1,5 +1,8 @@
 package com.neathorium.thorium.framework.selenium.namespaces.devtools;
 
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.constants.scripts.element.Displayed;
 import com.neathorium.thorium.framework.selenium.constants.validators.SeleniumFormatterConstants;
 import com.neathorium.thorium.framework.selenium.namespaces.SeleniumExecutor;
@@ -8,10 +11,7 @@ import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.D
 import com.neathorium.thorium.framework.selenium.namespaces.factories.DriverFunctionFactory;
 import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
-import com.neathorium.thorium.core.namespaces.predicates.DataPredicates;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 
@@ -53,7 +53,7 @@ public interface DevtoolsDriverFunctions {
             Element.getText(output)
         ).apply(driver);
 
-        return DataFactoryFunctions.replaceObject(result, Integer.valueOf(String.valueOf(result.object)));
+        return DataFactoryFunctions.replaceObject(result, Integer.valueOf(String.valueOf(result.OBJECT())));
     }
 
     private static Function<WebDriver, Data<Integer>> getCountOfElementsCore(LazyElement input, LazyElement output, String cssSelector) {
@@ -80,7 +80,7 @@ public interface DevtoolsDriverFunctions {
             Element.getText(output)
         ).apply(driver);
 
-        return DataFactoryFunctions.replaceObject(result, CoreUtilities.castToBoolean(String.valueOf(result.object)));
+        return DataFactoryFunctions.replaceObject(result, BooleanUtilities.castToBoolean(String.valueOf(result.OBJECT())));
     }
 
     private static Function<WebDriver, Data<Boolean>> isDisplayedCore(LazyElement input, LazyElement output, String cssSelector) {
@@ -99,7 +99,7 @@ public interface DevtoolsDriverFunctions {
             Element.getText(output)
         ).apply(driver);
 
-        return DataFactoryFunctions.replaceObject(result, CoreUtilities.castToBoolean(String.valueOf(result.object)));
+        return DataFactoryFunctions.replaceObject(result, BooleanUtilities.castToBoolean(String.valueOf(result.OBJECT())));
     }
 
     private static Function<WebDriver, Data<Boolean>> isPresentCore(LazyElement input, LazyElement output, String cssSelector) {

@@ -1,18 +1,17 @@
 package com.neathorium.thorium.framework.selenium.namespaces.driver.properties;
 
+import com.neathorium.thorium.core.data.constants.CoreDataConstants;
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.records.Data;
+import com.neathorium.thorium.framework.selenium.constants.SeleniumCoreConstants;
 import com.neathorium.thorium.framework.selenium.constants.validators.SeleniumFormatterConstants;
 import com.neathorium.thorium.framework.selenium.namespaces.Driver;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
-import com.neathorium.thorium.core.constants.CoreConstants;
-import com.neathorium.thorium.core.constants.CoreDataConstants;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.extensions.boilers.StringSet;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
 import com.neathorium.thorium.core.namespaces.BaseExecutionFunctions;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
-import com.neathorium.thorium.core.records.Data;
 import com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore;
+import com.neathorium.thorium.java.extensions.classes.boilers.StringSet;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 
@@ -43,12 +42,12 @@ public interface DriverPropertyFunctions {
             nameof += " - (\"" + property + "\")";
         }
 
-        final var status = isPropertyNotBlank && CoreUtilities.areNotNull(guard, function, defaultValue);
+        final var status = isPropertyNotBlank && NullablePredicates.areNotNull(guard, function, defaultValue);
         return ifDriver(nameof, status, getPropertyCore(property, guard, function, defaultValue), DataFactoryFunctions.getWith(defaultValue, false, SeleniumFormatterConstants.DRIVER_WAS_NULL));
     }
 
     private static DriverFunction<String> getString(String property, Function<WebDriver, String> function) {
-        return getProperty(property, NullableFunctions::isNotNull, function, CoreFormatterConstants.EMPTY);
+        return getProperty(property, NullablePredicates::isNotNull, function, CoreFormatterConstants.EMPTY);
     }
 
     static DriverFunction<String> getTitle() {
@@ -64,8 +63,8 @@ public interface DriverPropertyFunctions {
     }
 
     static DriverFunction<StringSet> getWindowHandles() {
-        final var getStringSetOfWindowHandles = BaseExecutionFunctions.conditionalChain(NullableFunctions::isNotNull, WebDriver::getWindowHandles, StringSet::new, CoreConstants.NULL_STRING_SET);
-        return getProperty("WindowHandles", NullableFunctions::isNotNull, getStringSetOfWindowHandles, CoreConstants.NULL_STRING_SET);
+        final var getStringSetOfWindowHandles = BaseExecutionFunctions.conditionalChain(NullablePredicates::isNotNull, WebDriver::getWindowHandles, StringSet::new, SeleniumCoreConstants.NULL_STRING_SET);
+        return getProperty("WindowHandles", NullablePredicates::isNotNull, getStringSetOfWindowHandles, SeleniumCoreConstants.NULL_STRING_SET);
     }
 
     static DriverFunction<Integer> getWindowHandleAmount() {

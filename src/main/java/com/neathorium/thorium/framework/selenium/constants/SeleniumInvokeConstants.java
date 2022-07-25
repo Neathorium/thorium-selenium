@@ -1,6 +1,6 @@
 package com.neathorium.thorium.framework.selenium.constants;
 
-import com.neathorium.thorium.core.records.reflection.InvokeMethodData;
+import com.neathorium.thorium.framework.selenium.repositories.method.records.reflection.InvokeMethodData;
 
 public abstract class SeleniumInvokeConstants {
     public static final String INVOKE = "invoke";
