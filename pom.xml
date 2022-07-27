@@ -17,7 +17,7 @@
         <eclipse-collections.version>11.0.0</eclipse-collections.version>
         <commons.io.version>2.11.0</commons.io.version>
         <selector.specificity.version>9018f2bcf59f3b76578100c4d0c7ef98e674b5c5</selector.specificity.version>
-        <thorium-framework-core.version>2b9b1babed9d3b3d33a8599dcd39142ba2ae4760</thorium-framework-core.version>
+        <thorium-framework-core.version>ff1ad3e057a9e93eed573affe9ba8df758de1b44</thorium-framework-core.version>
         <jackson.version>2.13.3</jackson.version>
         <junit.jupiter.version>5.8.2</junit.jupiter.version>
     </properties>
