@@ -17,7 +17,7 @@ import static common.AssertionConstants.assertDataTrue;
 
 public class PasteTests {
     @Test
-    public void homepageTest() {
+    void homepageTest() {
         final var value = "This is a clipboard item";
         assertDataTrue.accept(StepExecutor.execute(
             step(Driver.navigate("https://duckduckgo.com"), FFDriverFunctions.get()),

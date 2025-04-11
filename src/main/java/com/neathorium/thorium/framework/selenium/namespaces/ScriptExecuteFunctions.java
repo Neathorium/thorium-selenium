@@ -21,6 +21,15 @@ public interface ScriptExecuteFunctions {
         return data.validator.test(parameters) ? data.converter.apply(parameters) : CoreConstants.EMPTY_OBJECT_ARRAY;
     }
 
+    static <T> Object[] handleParameter(ScriptParametersData<T> data) {
+        if (!ScriptExecutions.isValidScriptParametersData(data)) {
+            return CoreConstants.EMPTY_OBJECT_ARRAY;
+        }
+
+        final var parameters = data.parameters;
+        return data.validator.test(parameters) ? data.converter.apply(parameters) : CoreConstants.EMPTY_OBJECT_ARRAY;
+    }
+
     static ScriptHandlerFunction executeScript() {
         return executor -> executor::executeScript;
     }

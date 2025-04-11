@@ -173,4 +173,8 @@ public interface SeleniumUtilities {
     static Object[] unwrapToArray(Data<?> data) {
         return DataPredicates.isValidNonFalse(data) ? ArrayUtils.toArray(data.OBJECT()) : CoreConstants.EMPTY_OBJECT_ARRAY;
     }
+
+    static <T> Object[] toArray(T object) {
+        return ArrayUtils.toArray(object);
+    }
 }

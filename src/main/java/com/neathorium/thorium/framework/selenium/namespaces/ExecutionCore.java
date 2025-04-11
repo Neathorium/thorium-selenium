@@ -141,7 +141,7 @@ public interface ExecutionCore {
         );
     }
 
-    static <T> DriverFunction<T> ifDriver(String nameof, String errorMessage, DriverFunction<Boolean> function, DriverFunction<T> positive, Data<T> negative) {
+    static <T, U> DriverFunction<T> ifDriver(String nameof, String errorMessage, DriverFunction<U> function, DriverFunction<T> positive, Data<T> negative) {
         return DriverFunctionFactory.getFunction(
             ifDependency(
                 nameof,

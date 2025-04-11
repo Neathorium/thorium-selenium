@@ -3,6 +3,7 @@ package com.neathorium.thorium.framework.selenium.compatibility;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WindowType;
 
 public final class NullTargetLocator implements WebDriver.TargetLocator {
     public NullTargetLocator() {}
@@ -29,6 +30,11 @@ public final class NullTargetLocator implements WebDriver.TargetLocator {
 
     @Override
     public WebDriver window(String s) {
+        return null;
+    }
+
+    @Override
+    public WebDriver newWindow(WindowType typeHint) {
         return null;
     }
 

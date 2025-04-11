@@ -19,11 +19,11 @@ public interface Globals {
     }
 
     static String isGroupExists(String functionGroup) {
-        return General.IF_FALSE_RETURN_FALSE("document.hasOwnProperty(" + functionGroup + ")");
+        return General.IF_FALSE_RETURN_FALSE("document.hasOwnProperty('" + functionGroup + "')");
     }
 
     static String isFunctionExists(String functionGroup, String name) {
-        return "const GLOBALS = document[" + functionGroup + "];" + General.IF_FALSE_RETURN_FALSE("GLOBALS.hasOwnProperty('" + name + "')");
+        return "const GLOBALS = document['" + functionGroup + "'];" + General.IF_FALSE_RETURN_FALSE("GLOBALS.hasOwnProperty('" + name + "')");
     }
 
     static String isExists(String functionGroup, String function) {
@@ -31,14 +31,27 @@ public interface Globals {
     }
 
     static String hasAndIsFunctionCondition(String name) {
-        return "(GLOBALS && (GLOBALS.hasOwnProperty('" + name + "')) && (GLOBALS['" + name + "'] === 'function'))";
+        return "(GLOBALS && (\nGLOBALS.hasOwnProperty(\"" + name + "\")) && (GLOBALS[\"" + name + "\"] === 'function')\n)";
     }
 
     static String getFunctionExists(String functionGroup, String name) {
         return (
             GeneralSnippets.STRICT +
-            "const GLOBALS = document['" + functionGroup + "'];" +
-            General.RETURN(hasAndIsFunctionCondition(name))
+            "const GLOBALS = document['" + functionGroup + "'];\n" +
+            "var globalsCondition = true && (typeof GLOBALS !== 'undefined');\n" +
+            "if (globalsCondition === false) {\n" +
+            "    return false;\n" +
+            "}\n" +
+            "var globalsHasOwn = GLOBALS.hasOwnProperty('" + name + "');\n" +
+            "if (globalsHasOwn === false) {\n" +
+            "    return false;\n" +
+            "}\n" +
+            "var globalsIsFunction = GLOBALS['" + name + "'] === 'function';\n" +
+            "if (globalsIsFunction === false) {\n" +
+            "    return false;\n" +
+            "}\n" +
+            "var endCondition = globalsCondition && globalsHasOwn && globalsIsFunction;\n" +
+            General.RETURN("condition")
         );
     }
 

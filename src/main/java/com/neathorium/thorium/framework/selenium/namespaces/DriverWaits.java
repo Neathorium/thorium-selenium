@@ -9,6 +9,7 @@ import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.BasicPredicates;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.GuardPredicates;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.function.Predicate;
 
@@ -19,7 +20,7 @@ public interface DriverWaits {
         final Predicate<Integer> condition = BasicPredicates::isPositiveNonZero;
         return ExecutionCore.ifDriver(
             "waitNavigatedTo",
-            isNotBlank(url) && NullablePredicates.isNotNull(query) && GuardPredicates.areAll(condition, interval, timeout) && (interval < timeout),
+            StringUtils.isNotBlank(url) && NullablePredicates.isNotNull(query) && GuardPredicates.areAll(condition, interval, timeout) && (interval < timeout),
             driver -> WaitFunctions.core(
                 WaitDataFactory.getWith(
                     ExpectedConditions.isUrlContains(url, query),
@@ -35,7 +36,7 @@ public interface DriverWaits {
         final Predicate<Integer> condition = BasicPredicates::isPositiveNonZero;
         return ExecutionCore.ifDriver(
             "navigateAndWait",
-            isNotBlank(url) && NullablePredicates.isNotNull(query) && GuardPredicates.areAll(condition, interval, timeout) && BasicPredicates.isSmallerThan(interval, timeout),
+                StringUtils.isNotBlank(url) && NullablePredicates.isNotNull(query) && GuardPredicates.areAll(condition, interval, timeout) && BasicPredicates.isSmallerThan(interval, timeout),
             SeleniumExecutor.execute(Driver.navigate(url, query), waitNavigatedTo(url, interval, timeout)),
             CoreDataConstants.PARAMETERS_NULL_BOOLEAN
         );

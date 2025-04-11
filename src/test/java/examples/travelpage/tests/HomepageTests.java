@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 public class HomepageTests {
     @Test
-    public void homepageTest() {
+    void homepageTest() {
         final var result = SeleniumExecutor.execute(
             "Go to Homepage",
             DriverWaits.navigateAndWait(System.getProperty("page"), 300, 3000),

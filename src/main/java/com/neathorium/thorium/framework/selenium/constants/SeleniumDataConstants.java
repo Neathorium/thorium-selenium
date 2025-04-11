@@ -12,6 +12,7 @@ import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
 import com.neathorium.thorium.java.extensions.classes.boilers.StringSet;
 import org.openqa.selenium.By;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -20,6 +21,7 @@ import java.util.function.Function;
 public abstract class SeleniumDataConstants {
     public static final Data<By> NULL_BY = DataFactoryFunctions.getInvalidWith(By.cssSelector(CoreFormatterConstants.EMPTY), "nullBy", "Null By Data.");
     public static final Data<WebElement> NULL_ELEMENT = DataFactoryFunctions.getInvalidWith(SeleniumCoreConstants.STOCK_ELEMENT, "defaultNullWebElementData", "Internal null element" + CoreFormatterConstants.END_LINE);
+    public static final Data<SearchContext> NULL_CONTEXT = DataFactoryFunctions.getInvalidWith((SearchContext)SeleniumCoreConstants.STOCK_ELEMENT, "defaultNullSearchContextData", "Internal null searchContext" + CoreFormatterConstants.END_LINE);
     public static final Data<WebElement> NULL_ELEMENT_NULL_DRIVER = DataFactoryFunctions.getInvalidWith(SeleniumCoreConstants.STOCK_ELEMENT, "nullElementNullDriver", SeleniumFormatterConstants.DRIVER_WAS_NULL);
     public static final Data<WebElementList> NULL_LIST = DataFactoryFunctions.getInvalidWith(SeleniumCoreConstants.NULL_ELEMENT_LIST, "nullList", "nullList data" + CoreFormatterConstants.END_LINE);
     public static final Data<WebElementList> DRIVER_WAS_NULL_LIST = DataFactoryFunctions.getInvalidWith(SeleniumCoreConstants.NULL_ELEMENT_LIST, "driverWasNullList", SeleniumFormatterConstants.DRIVER_WAS_NULL);
@@ -33,7 +35,7 @@ public abstract class SeleniumDataConstants {
     public static final Data<StringSet> NULL_STRING_SET_DATA = DataFactoryFunctions.getInvalidWith(SeleniumCoreConstants.NULL_STRING_SET, "nullStringSet", "Null String Set data" + CoreFormatterConstants.END_LINE);
     public static final Data<WebDriver> NULL_DRIVER = DataFactoryFunctions.getInvalidWith(null, "nullDriver", "No Drivers.Driver instance found" + CoreFormatterConstants.END_LINE);
 
-    public static final Function<WebDriver.TargetLocator, Data<Boolean>> SWITCH_TO_NEGATIVE = targetLocator -> CoreDataConstants.NULL_BOOLEAN;
+    public static final Function<WebDriver.TargetLocator, Data<SearchContext>> SWITCH_TO_NEGATIVE = targetLocator -> SeleniumDataConstants.NULL_CONTEXT;
     public static final Data<Boolean> DRIVER_WAS_NULL = DataFactoryFunctions.getInvalidBooleanWith("driverWasNull", SeleniumFormatterConstants.DRIVER_WAS_NULL);
     public static final Data<Integer> NULL_INTEGER_NULL_DRIVER = DataFactoryFunctions.getInvalidWith(0, "nullIntegerNullDriver", SeleniumFormatterConstants.DRIVER_WAS_NULL);
     public static final Data<Integer> NO_ELEMENTS_FOUND = DataFactoryFunctions.getInvalidWith(0, "noElementsFound", SeleniumFormatterConstants.ELEMENT_LIST_EMPTY_OR_NULL);

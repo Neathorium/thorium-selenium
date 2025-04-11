@@ -45,6 +45,7 @@ import org.openqa.selenium.WebElement;
 import java.util.function.Function;
 
 import static com.neathorium.thorium.core.namespaces.validators.CoreFormatter.isBlankMessageWithName;
+import static com.neathorium.thorium.core.namespaces.validators.CoreFormatter.isNullMessageWithName;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -243,7 +244,7 @@ public interface ElementInvokeFunctions {
 
     static DriverFunction<Void> sendKeys(LazyElement element, String parameter) {
         final var nameof = "sendKeys";
-        final var errorMessage = FrameworkCoreFormatter.isNullLazyElementMessage(element) + isBlankMessageWithName(parameter, "Send keys value");
+        final var errorMessage = FrameworkCoreFormatter.isNullLazyElementMessage(element) + isNullMessageWithName(parameter, "Send keys value");
         if (isNotBlank(errorMessage)) {
             return driver -> DataFactoryFunctions.getInvalidWith(null, nameof, errorMessage);
         }

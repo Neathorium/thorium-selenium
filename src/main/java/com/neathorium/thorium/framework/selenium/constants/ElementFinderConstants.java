@@ -7,6 +7,7 @@ import com.neathorium.thorium.framework.selenium.namespaces.Driver;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.WebElementList;
 import com.neathorium.thorium.framework.core.namespaces.extensions.boilers.LazyLocatorList;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -52,7 +53,7 @@ public abstract class ElementFinderConstants {
         )
     );
 
-    public static final Map<String, Function<LazyLocatorList, DriverFunction<Boolean>>> frameNestedStrategyMap = Collections.unmodifiableMap(
+    public static final Map<String, Function<LazyLocatorList, DriverFunction<SearchContext>>> frameNestedStrategyMap = Collections.unmodifiableMap(
         new LinkedHashMap<>(
             Map.ofEntries(
                 entry("true", Driver::switchToNestedFrame),

@@ -3,22 +3,44 @@ package com.neathorium.thorium.framework.selenium.constants.scripts.general;
 import com.neathorium.thorium.framework.selenium.namespaces.scripter.Globals;
 import com.neathorium.thorium.framework.selenium.namespaces.scripter.General;
 
-import static com.neathorium.thorium.framework.selenium.namespaces.scripter.General.IF_RETURN;
+import java.util.Arrays;
 
 public abstract class ScrollIntoView {
     public static final String FUNCTION_NAME = "scrollIntoView_s",
         FUNCTION_BEHAVIOR_PARAMS = "GLOBALS.scrollBehaviorParameters",
         FUNCTION_GROUP = "_SCROLL_INTO_VIEW",
         IS_EXISTS = Globals.getFunctionExists(FUNCTION_GROUP, FUNCTION_NAME),
-        EXECUTE = Globals.function(
-            FUNCTION_GROUP,
-            FUNCTION_NAME,
-            Globals.isExists(FUNCTION_GROUP, FUNCTION_NAME) +
-            FUNCTION_BEHAVIOR_PARAMS + "= {behavior: 'smooth', scrollMode: 'if-needed'};" +
-            General.IF_THEN("arguments.length > 1", FUNCTION_BEHAVIOR_PARAMS + "['boundary'] = arguments[1];"),
-            "GLOBALS." + FUNCTION_NAME + "(arguments[0], " + FUNCTION_BEHAVIOR_PARAMS + ")"
-        ), SET_FUNCTIONS = (
+        EXECUTE = String.join("\n", Arrays.asList(
+            "let scrollTarget = arguments[0];",
+            "let lastPosition = null;",
+            "document['__is_scrolled_into_view'] = false;",
+            "scrollTarget.scrollIntoView({behavior:'smooth', block: 'center'});",
+            "function checkPositionFunction() {",
+            "    const newPosition = scrollTarget.getBoundingClientRect().top;",
+            "    if (newPosition === lastPosition) {",
+            "        document['__is_scrolled_into_view'] = true;",
+            "    } else {",
+            "        lastPosition = newPosition;",
+            "        requestAnimationFrame(checkPositionFunction);",
+            "    }",
+            "}",
+
+            "requestAnimationFrame(checkPositionFunction);",
+            "return true;"
+        )),
+        CHECK = String.join("\n", Arrays.asList(
+            "let rect = arguments[0].getBoundingClientRect();\n",
+            "\n",
+            "return (\n",
+            "    Math.round(rect.top) >= 0 &&\n",
+            "    Math.round(rect.left) >= 0 &&\n",
+            "    Math.round(rect.bottom) <= (window.innerHeight || document.documentElement.clientHeight) && /* or $(window).height() */\n",
+            "    Math.round(rect.right) <= (window.innerWidth || document.documentElement.clientWidth) /* or $(window).width() */\n",
+            ");"
+        )),
+        SET_FUNCTIONS = (
             GeneralSnippets.STRICT +
+            "return true;\n /*" +
             Globals.initialize(FUNCTION_GROUP) +
             "GLOBALS.isElement = function isElementFunction(el) {" +
             "    " + General.RETURN("typeof el === 'object' && el.nodeType === 1") +
@@ -207,6 +229,7 @@ public abstract class ScrollIntoView {
             "    return true;" +
             "}" +
             GeneralSnippets.RETURN_TRUE +
-            ""
+            "" +
+            "\n */"
         );
 }
