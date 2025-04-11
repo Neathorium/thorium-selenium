@@ -1,5 +1,6 @@
 package com.neathorium.thorium.framework.selenium.namespaces;
 
+import com.neathorium.thorium.core.data.namespaces.DataFunctions;
 import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
 import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.namespaces.utilities.SeleniumUtilities;
@@ -17,6 +18,15 @@ public interface WaitPredicateFunctions {
     static <T> boolean isTruthyData(T object) {
         return (
             ((object instanceof Data) && (DataPredicates.isValidNonFalse((Data<?>) object))) ||
+            ((object instanceof LazyElement) && (SeleniumUtilities.isNotNullLazyElement((LazyElement)object)))
+        ) || BooleanUtilities.isTrue(object);
+    }
+
+    static <T> boolean isTruthyAndObjectTruthyData(T object) {
+        if ((object instanceof Data<?> data)) {
+            return DataPredicates.isValidNonFalse(data) && BooleanUtilities.isTrue(DataFunctions.getObject(data));
+        }
+        return (
             ((object instanceof LazyElement) && (SeleniumUtilities.isNotNullLazyElement((LazyElement)object)))
         ) || BooleanUtilities.isTrue(object);
     }

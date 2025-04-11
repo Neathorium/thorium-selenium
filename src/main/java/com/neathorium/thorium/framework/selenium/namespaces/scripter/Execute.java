@@ -5,7 +5,12 @@ import com.neathorium.thorium.core.data.namespaces.DataFunctions;
 import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
 import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
 import com.neathorium.thorium.core.data.records.Data;
-import com.neathorium.thorium.core.namespaces.predicates.ExecutorPredicates;
+import com.neathorium.thorium.core.wait.exceptions.WaitTimeoutException;
+import com.neathorium.thorium.core.wait.namespaces.WaitFunctions;
+import com.neathorium.thorium.core.wait.namespaces.factories.WaitDataFactory;
+import com.neathorium.thorium.core.wait.namespaces.factories.WaitTimeDataFactory;
+import com.neathorium.thorium.exceptions.constants.ExceptionConstants;
+import com.neathorium.thorium.exceptions.namespaces.ExceptionFunctions;
 import com.neathorium.thorium.framework.selenium.constants.DriverFunctionConstants;
 import com.neathorium.thorium.framework.selenium.constants.ScriptExecutorConstants;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumDataConstants;
@@ -16,9 +21,7 @@ import com.neathorium.thorium.framework.selenium.constants.scripts.general.Ready
 import com.neathorium.thorium.framework.selenium.constants.scripts.general.ScrollIntoView;
 import com.neathorium.thorium.framework.selenium.constants.scripts.general.ShadowRoot;
 import com.neathorium.thorium.framework.selenium.enums.SingleGetter;
-import com.neathorium.thorium.framework.selenium.namespaces.Driver;
-import com.neathorium.thorium.framework.selenium.namespaces.ScriptExecuteFunctions;
-import com.neathorium.thorium.framework.selenium.namespaces.SeleniumExecutor;
+import com.neathorium.thorium.framework.selenium.namespaces.*;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.factories.DriverFunctionFactory;
 import com.neathorium.thorium.framework.selenium.namespaces.repositories.LocatorRepository;
@@ -29,16 +32,17 @@ import com.neathorium.thorium.framework.selenium.records.scripter.ScriptParamete
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
 import com.neathorium.thorium.core.namespaces.DataExecutionFunctions;
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
-import com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
 import com.neathorium.thorium.java.extensions.namespaces.utilities.StringUtilities;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import static com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions.getWith;
 import static com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore.ifDriver;
@@ -107,56 +111,88 @@ public interface Execute {
         return ExecutionCore.ifDriver(
             "isScrollIntoViewExistsData",
             driver -> {
-                final var result = Driver.execute(ScrollIntoView.IS_EXISTS).apply(driver);
+                final var script = ScrollIntoView.IS_EXISTS;
+                final var result = Driver.execute(script).apply(driver);
                 return getWith(Boolean.valueOf(result.OBJECT().toString()), result.STATUS(), result.MESSAGE());
             },
             CoreDataConstants.NULL_BOOLEAN
         );
     }
 
-    static DriverFunction<Boolean> scrollIntoViewExecutor(LazyElement data) {
-        return SeleniumUtilities.isNotNullLazyElement(data) ? scrollIntoViewExecutor(data.get()) : DriverFunctionConstants.NULL_BOOLEAN;
+    static DriverFunction<Boolean> scrollIntoViewExecutor(LazyElement data, int interval, int duration) {
+        return SeleniumUtilities.isNotNullLazyElement(data) ? scrollIntoViewExecutor(data.get(), interval, duration) : DriverFunctionConstants.NULL_BOOLEAN;
     }
 
-    static DriverFunction<Boolean> scrollIntoViewExecutor(DriverFunction<WebElement> getter) {
+    static DriverFunction<Boolean> scrollIntoViewExecutor(DriverFunction<WebElement> getter, int interval, int duration) {
         return ifDriver(
             "scrollIntoViewExecutor",
             NullablePredicates.isNotNull(getter),
             driver -> {
                 final var parameters = new ScriptParametersData<>(getter.apply(driver), DataPredicates::isValidNonFalse, SeleniumUtilities::unwrapToArray);
                 final var result = Driver.executeSingleParameter(ScrollIntoView.EXECUTE, ScriptExecuteFunctions.handleDataParameter(parameters)).apply(driver);
-                return getWith(NullablePredicates.isNotNull(result.OBJECT()), result.STATUS(), result.MESSAGE());
+                final var resultObject = result.OBJECT();
+                if (DataPredicates.isInvalidOrFalse(result)) {
+                    return DataFactoryFunctions.replaceObject(result, NullablePredicates.isNotNull(resultObject));
+                }
+
+                final DriverFunction<Boolean> step = d -> {
+                    final var r = Driver.executeSingleParameter(ScrollIntoView.CHECK, ScriptExecuteFunctions.handleDataParameter(parameters)).apply(d);
+                    final var status = Boolean.parseBoolean("" + DataFunctions.getObject(r));
+                    final var message = "Element was" + (status ? "" : "n't") + " scrolled into view" + CoreFormatterConstants.END_LINE;
+                    return DataFactoryFunctions.getWith(status, status, "scrollIntoViewVerifier", message, r.EXCEPTION());
+                };
+                Data<Boolean> verifierResult = CoreDataConstants.NULL_BOOLEAN;
+                var exception = ExceptionConstants.EXCEPTION;
+                try {
+                    verifierResult = WaitConditions.waitWith(step, WaitPredicateFunctions::isTruthyData, interval, duration, "scroll into view").apply(driver);
+                } catch (WaitTimeoutException ex) {
+                    exception = ex;
+                }
+
+                final var status = ExceptionFunctions.isNonException(exception);
+                return DataFactoryFunctions.getWith(status, status, verifierResult.MESSAGE(), exception);
             },
             CoreDataConstants.NULL_BOOLEAN
         );
     }
 
     static DriverFunction<Boolean> setScrollIntoView() {
+        final var nameof = "setScrollIntoView";
         return ExecutionCore.ifDriver(
-            "setScrollIntoView",
+            nameof,
             driver -> {
-                final var result = SeleniumExecutor.conditionalSequence(ExecutorPredicates::isFalseStatus, isScrollIntoViewExistsData(), Driver.execute(ScrollIntoView.SET_FUNCTIONS)).apply(driver);
-                final var status = DataPredicates.isValidNonFalse(result);
+                final var isExists = isScrollIntoViewExistsData().apply(driver);
+                var status = false;
+                Data<?> result = null;
+                if (DataPredicates.isValid(isExists) && DataFunctions.getStatus(isExists)) {
+                    result = Driver.execute(ScrollIntoView.SET_FUNCTIONS).apply(driver);
+                    status = DataPredicates.isValidNonFalse(result);
+                }
+
                 return DataFactoryFunctions.getBoolean(status, SeleniumFormatter.getScrollIntoViewMessage(DataFunctions.getFormattedMessage(result), status));
             },
             CoreDataConstants.NULL_BOOLEAN
         );
     }
 
-    static DriverFunction<Boolean> scrollIntoView(LazyElement data) {
-        return SeleniumExecutor.execute(Driver.isElementHidden(data), setScrollIntoView(), scrollIntoViewExecutor(data));
+    static DriverFunction<Boolean> scrollIntoView(LazyElement data, int interval, int duration) {
+        return SeleniumExecutor.execute(Driver.isElementHidden(data), setScrollIntoView(), scrollIntoViewExecutor(data, interval, duration));
     }
 
-    static DriverFunction<Boolean> scrollIntoView(Data<LazyElement> data) {
-        return ExecutionCore.ifDriver("scrollIntoView", DataPredicates.isValidNonFalse(data), scrollIntoView(data.OBJECT()), CoreDataConstants.NULL_BOOLEAN);
+    static DriverFunction<Boolean> scrollIntoViewEvenDisplayed(LazyElement data, int interval, int duration) {
+        return SeleniumExecutor.execute(setScrollIntoView(), scrollIntoViewExecutor(data, interval, duration));
     }
 
-    static DriverFunction<Boolean> scrollIntoView(By locator, SingleGetter getter) {
-        return scrollIntoView(LocatorRepository.getIfContains(locator, getter));
+    static DriverFunction<Boolean> scrollIntoView(Data<LazyElement> data, int interval, int duration) {
+        return ExecutionCore.ifDriver("scrollIntoView", DataPredicates.isValidNonFalse(data), scrollIntoView(data.OBJECT(), interval, duration), CoreDataConstants.NULL_BOOLEAN);
     }
 
-    static DriverFunction<Boolean> scrollIntoView(By locator) {
-        return scrollIntoView(locator, SingleGetter.DEFAULT);
+    static DriverFunction<Boolean> scrollIntoView(By locator, SingleGetter getter, int interval, int duration) {
+        return scrollIntoView(LocatorRepository.getIfContains(locator, getter), interval, duration);
+    }
+
+    static DriverFunction<Boolean> scrollIntoView(By locator, int interval, int duration) {
+        return scrollIntoView(locator, SingleGetter.DEFAULT, interval, duration);
     }
 
     static <T> Data<Object[]> handleDataParameterDefault(Data<T> parameter) {

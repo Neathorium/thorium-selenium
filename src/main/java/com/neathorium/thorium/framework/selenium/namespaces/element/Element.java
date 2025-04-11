@@ -79,7 +79,7 @@ public interface Element {
 
     static DriverFunction<Boolean> sendKeys(LazyElement element, String input) {
         return ifDriver(
-            SeleniumFormatter.getSendKeysNotSendingMessage(element, input),
+            SeleniumFormatter.getSendKeysNotSendingMessagePermitBlank(element, input),
             DriverFunctionFactory.getFunction(DataExecutionFunctions.validChain(ElementInvokeFunctions.sendKeys(element, input), Element.actionCore("sent keys to"), CoreDataConstants.NULL_BOOLEAN))
         );
     }

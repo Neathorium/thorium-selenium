@@ -80,12 +80,9 @@ import com.neathorium.thorium.java.extensions.namespaces.predicates.BasicPredica
 import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.SizablePredicates;
 import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchFrameException;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebDriver;
+import org.apache.commons.lang3.StringUtils;
+import org.openqa.selenium.*;
 import org.openqa.selenium.WebDriver.TargetLocator;
-import org.openqa.selenium.WebElement;
 
 import java.util.List;
 import java.util.Map;
@@ -812,7 +809,8 @@ public interface Driver {
                 return replaceMessage(SeleniumDataConstants.NULL_ELEMENT, nameof, "Nested Element" + CoreFormatterConstants.WAS_NULL);
             }
 
-            return nestedElement.OBJECT().isNotNullAndNonEmpty() ? (
+            final var elements = DataFunctions.getObject(nestedElement);
+            return elements.isNotNullAndNonEmpty() ? (
                 getElementFromSingle(nestedElement)
             ) : replaceMessage(SeleniumDataConstants.NULL_ELEMENT, nameof, "Nested Element" + CoreFormatterConstants.WAS_NULL + nestedElement.MESSAGE());
         }) : context -> replaceMessage(SeleniumDataConstants.NULL_ELEMENT, nameof, SeleniumFormatterConstants.LOCATOR_WAS_NULL);
@@ -911,7 +909,7 @@ public interface Driver {
         return getShadowNestedElements(locators, SeleniumLazyLocatorFactory.get(locator));
     }
 
-    static <T> Data<Boolean> switchTo(
+    static <T> Data<T> switchTo(
         TargetLocator locator,
         Function<TargetLocator, T> operation,
         BiFunction<Boolean, SwitchResultMessageData<Void>, String> formatter,
@@ -919,21 +917,22 @@ public interface Driver {
     ) {
         final var nameof = "switchTo";
         if (NullablePredicates.isNull(locator)) {
-            DataFactoryFunctions.getBoolean(false, nameof, formatter.apply(false, messageData));
+            return DataFactoryFunctions.getWith(null,false, nameof, formatter.apply(false, messageData));
         }
 
         var exception = ExceptionConstants.EXCEPTION;
+        T result = null;
         try {
-            operation.apply(locator);
+            result = operation.apply(locator);
         } catch (NoSuchFrameException ex) {
             exception = ex;
         }
 
         var status = ExceptionFunctions.isNonException(exception);
-        return DataFactoryFunctions.getBoolean(status, nameof, formatter.apply(status, messageData), exception);
+        return DataFactoryFunctions.getWith(result, status, nameof, formatter.apply(status, messageData), exception);
     }
 
-    static <T, U> Data<Boolean> switchTo(
+    static <T, U> Data<U> switchTo(
         T target,
         TargetLocator locator,
         boolean guardCondition,
@@ -943,40 +942,41 @@ public interface Driver {
     ) {
         final var nameof = "switchTo";
         if (NullablePredicates.areAnyNull(target, locator) || BooleanUtilities.isFalse(guardCondition)) {
-            DataFactoryFunctions.getInvalidBooleanWith(nameof, formatter.apply(false, messageData));
+            return DataFactoryFunctions.getWith(null, false, nameof, formatter.apply(false, messageData));
         }
 
         var exception = ExceptionConstants.EXCEPTION;
+        U result = null;
         try {
-            operation.apply(locator, target);
+            result = operation.apply(locator, target);
         } catch (NoSuchFrameException ex) {
             exception = ex;
         }
 
         var status = ExceptionFunctions.isNonException(exception);
-        return DataFactoryFunctions.getBoolean(status, nameof, formatter.apply(status, messageData), exception);
+        return DataFactoryFunctions.getWith(result, status, nameof, formatter.apply(status, messageData), exception);
     }
 
-    static <T, U> Data<Boolean> switchTo(T target, TargetLocator locator, BiFunction<TargetLocator, T, U> operation, String type, String nameof) {
+    static <T, U> Data<U> switchTo(T target, TargetLocator locator, BiFunction<TargetLocator, T, U> operation, String type, String nameof) {
         return switchTo(target, locator, true, operation, SeleniumFormatter::getSwitchToMessage, new SwitchResultMessageData<T>(target, type, nameof));
     }
 
-    static <T, U> Function<TargetLocator, Data<Boolean>> switchTo(T target, BiFunction<TargetLocator, T, U> operation, String type, String nameof) {
+    static <T, U> Function<TargetLocator, Data<U>> switchTo(T target, BiFunction<TargetLocator, T, U> operation, String type, String nameof) {
         return locator -> switchTo(target, locator, operation, type, nameof);
     }
 
-    static Function<TargetLocator, Data<Boolean>> switchToFrame(Data<WebElement> data) {
-        final var nameof = "switchToFrame(Data<WebElement> data): ";
+    static Function<TargetLocator, Data<SearchContext>> switchToFrame(Data<WebElement> data) {
+        final var nameof = "switchToFrame(Data<SearchContext> data): ";
         return target -> ExecutionCore.ifData(
             nameof,
             NullablePredicates::isNotNull,
             target,
             switchTo(data.OBJECT(), TargetLocator::frame, "frame", nameof),
-            DataFactoryFunctions.getBoolean(false, nameof, "Couldn't attempt, data was null or false" + CoreFormatterConstants.END_LINE)
+            DataFactoryFunctions.getWith(SeleniumCoreConstants.STOCK_ELEMENT, false, nameof, "Couldn't attempt, data was null or false" + CoreFormatterConstants.END_LINE)
         );
     }
 
-    static Function<TargetLocator, Data<Boolean>> switchToFrameSingleList(Data<WebElementList> data) {
+    static Function<TargetLocator, Data<SearchContext>> switchToFrameSingleList(Data<WebElementList> data) {
         final var nameof = "switchToFrame(Data<WebElement> data): ";
         if (DataPredicates.isInvalidOrFalse(data)) {
             return SeleniumDataConstants.SWITCH_TO_NEGATIVE;
@@ -986,65 +986,65 @@ public interface Driver {
         return DataPredicates.isValidNonFalse(data) ? switchToFrame(element) : SeleniumDataConstants.SWITCH_TO_NEGATIVE;
     }
 
-    static DriverFunction<Boolean> switchToFrame(DriverFunction<WebElement> data) {
+    static DriverFunction<SearchContext> switchToFrame(DriverFunction<WebElement> data) {
         final var nameof = "switchToFrame";
         return ifDriver(
             nameof,
             NullablePredicates.isNotNull(data),
             driver -> switchToFrame(data.apply(driver)).apply(driver.switchTo()),
-            DataFactoryFunctions.getBoolean(false, nameof, "Data parameter " + CoreFormatterConstants.WAS_NULL)
+            DataFactoryFunctions.getWith(SeleniumCoreConstants.STOCK_ELEMENT, false, nameof, "Data parameter " + CoreFormatterConstants.WAS_NULL)
         );
     }
 
-    static DriverFunction<Boolean> switchToFrame(By locator, Function<By, DriverFunction<WebElement>> getter) {
+    static DriverFunction<SearchContext> switchToFrame(By locator, Function<By, DriverFunction<WebElement>> getter) {
         final var nameof = "switchToFrame";
         return ifDriver(
             nameof,
                 NullablePredicates.areNotNull(locator, getter),
             switchToFrame(getter.apply(locator)),
-            replaceMessage(CoreDataConstants.NULL_BOOLEAN, nameof, "Couldn't attempt switchToFrame.")
+            DataFactoryFunctions.getWith(SeleniumCoreConstants.STOCK_ELEMENT, false, nameof, "Couldn't attempt switchToFrame.", ExceptionConstants.EXCEPTION)
         );
     }
 
-    static DriverFunction<Boolean> switchToFrame(Data<By> locator, Function<By, DriverFunction<WebElement>> getter) {
+    static DriverFunction<SearchContext> switchToFrame(Data<By> locator, Function<By, DriverFunction<WebElement>> getter) {
         final var nameof = "switchToFrame";
         return ifDriver(
             nameof,
             DataPredicates.isValidNonFalse(locator) && NullablePredicates.isNotNull(getter),
             switchToFrame(getter.apply(locator.OBJECT())),
-            replaceMessage(CoreDataConstants.NULL_BOOLEAN, nameof, "Couldn't attempt switchToFrame.")
+            DataFactoryFunctions.getWith(SeleniumCoreConstants.STOCK_ELEMENT, false, nameof, "Couldn't attempt switchToFrame.", ExceptionConstants.EXCEPTION)
         );
     }
 
-    static DriverFunction<Boolean> switchToFrame(By locator) {
+    static DriverFunction<SearchContext> switchToFrame(By locator) {
         return switchToFrame(locator, Driver::getElement);
     }
 
-    static DriverFunction<Boolean> switchToFrame(LazyLocator locator) {
+    static DriverFunction<SearchContext> switchToFrame(LazyLocator locator) {
         return switchToFrame(SeleniumUtilities.getLocator(locator), Driver::getElement);
     }
 
-    static DriverFunction<Boolean> switchToFrame(LazyLocatorList locator) {
+    static DriverFunction<SearchContext> switchToFrame(LazyLocatorList locator) {
         final var nameof = "switchToFrame";
         return ifDriver(
             nameof,
             NullablePredicates.isNotNull(locator) && locator.isSingle(),
             switchToFrame(SeleniumUtilities.getLocator(locator.first()), Driver::getElement),
-            replaceMessage(CoreDataConstants.NULL_BOOLEAN, nameof, "Couldn't attempt switchToFrame.")
+            DataFactoryFunctions.getWith(SeleniumCoreConstants.STOCK_ELEMENT, false, nameof, "Couldn't attempt switchToFrame.", ExceptionConstants.EXCEPTION)
         );
     }
 
-    static DriverFunction<Boolean> switchToFrameFromSingle(LazyLocatorList locators) {
+    static DriverFunction<SearchContext> switchToFrameFromSingle(LazyLocatorList locators) {
         final var nameof = "switchToFrameFromSingle";
         return ifDriver(
             nameof,
             NullablePredicates.isNotNull(locators) && locators.isSingle(),
             switchToFrame(locators.first()),
-            replaceMessage(CoreDataConstants.NULL_BOOLEAN, nameof, "Couldn't attempt switchToFrame. Non-singular list used in function")
+            DataFactoryFunctions.getWith(SeleniumCoreConstants.STOCK_ELEMENT, false, nameof, "Couldn't attempt switchToFrame. Non-singular list used in function", ExceptionConstants.EXCEPTION)
         );
     }
 
-    static DriverFunction<Boolean> switchToFrame(int target) {
+    static DriverFunction<SearchContext> switchToFrame(int target) {
         return driver -> switchTo(
             target,
             driver.switchTo(),
@@ -1055,26 +1055,26 @@ public interface Driver {
         );
     }
 
-    static DriverFunction<Boolean> switchToWindow(String target) {
+    static DriverFunction<SearchContext> switchToWindow(String target) {
         return driver -> switchTo(
             target,
             driver.switchTo(),
-            isNotBlank(target),
-            TargetLocator::frame,
+            StringUtils.isNotBlank(target),
+            TargetLocator::window,
             SeleniumFormatter::getSwitchToMessage,
             new SwitchResultMessageData<>(target, "window", "switchToWindow(String target): ")
         );
     }
 
-    static DriverFunction<Boolean> switchToParentFrame() {
+    static DriverFunction<SearchContext> switchToParentFrame() {
         return driver -> switchTo(driver.switchTo(), TargetLocator::parentFrame, SeleniumFormatter::getSwitchToMessage, new SwitchResultMessageData<>(null, "parent frame", "switchToParentFrame: "));
     }
 
-    static DriverFunction<Boolean> switchToAlert() {
+    static DriverFunction<Alert> switchToAlert() {
         return driver -> switchTo(driver.switchTo(), TargetLocator::alert, SeleniumFormatter::getSwitchToMessage, new SwitchResultMessageData<>(null, "alert.", "switchToAlert: "));
     }
 
-    static DriverFunction<Boolean> switchToDefaultContent() {
+    static DriverFunction<SearchContext> switchToDefaultContent() {
         return driver -> switchTo(driver.switchTo(), TargetLocator::defaultContent, SeleniumFormatter::getSwitchToMessage, new SwitchResultMessageData<>(null, "default content.", "switchToDefaultContent: "));
     }
 
@@ -1083,20 +1083,20 @@ public interface Driver {
     }
 
 
-    static DriverFunction<Boolean> switchToNestedFrame(LazyLocatorList locators) {
+    static DriverFunction<SearchContext> switchToNestedFrame(LazyLocatorList locators) {
         return ifDriver(
             "switchToNestedFrame",
             NullablePredicates.isNotNull(locators) && locators.isNotNullAndNonEmpty(),
             driver -> {
                 if (DataPredicates.isInvalidOrFalse(switchToDefaultContent().apply(driver))) {
-                    return replaceMessage(CoreDataConstants.NULL_BOOLEAN, "Couldn't switch to default content.");
+                    return DataFactoryFunctions.getWith(SeleniumCoreConstants.STOCK_ELEMENT, false, "switchToNestedFrame", "Couldn't switch to default content.", ExceptionConstants.EXCEPTION);
                 }
 
                 final var length = locators.size();
                 var message = "";
                 var index = 0;
                 LazyLocator locator;
-                Data<?> data;
+                Data<SearchContext> data = SeleniumDataConstants.NULL_CONTEXT;
                 for(; index < length; ++index) {
                     locator = locators.get(index);
                     message += index + ".: ";
@@ -1112,9 +1112,9 @@ public interface Driver {
                     }
                 }
 
-                return DataFactoryFunctions.getBoolean(index == length, message);
+                return DataFactoryFunctions.getWith(data.OBJECT(), index == length, message);
             },
-            replaceMessage(CoreDataConstants.NULL_BOOLEAN, "Locators were empty.")
+            DataFactoryFunctions.getWith(SeleniumCoreConstants.STOCK_ELEMENT, false, "switchToNestedFrame", "Locators were empty", ExceptionConstants.EXCEPTION)
         );
     }
 
@@ -1439,7 +1439,7 @@ public interface Driver {
         var message = new StringBuilder();
         var parameterIndex = 0;
         var index = 0;
-        var switchData = CoreDataConstants.NULL_BOOLEAN;
+        var switchData = SeleniumDataConstants.NULL_CONTEXT;
         var current = defaults.DEFAULT_VALUE;
         final var length = data.INTERNAL_DATA.LIMIT;
         var cacheKeyData = new CachedLookupKeysData(name, "", "", 0);

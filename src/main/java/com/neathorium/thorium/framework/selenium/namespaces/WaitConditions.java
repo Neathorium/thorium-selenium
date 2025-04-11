@@ -2,6 +2,7 @@ package com.neathorium.thorium.framework.selenium.namespaces;
 
 import com.neathorium.thorium.core.data.constants.CoreDataConstants;
 import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.core.wait.namespaces.WaitFunctions;
 import com.neathorium.thorium.core.wait.namespaces.factories.WaitDataFactory;
 import com.neathorium.thorium.core.wait.namespaces.factories.WaitTimeDataFactory;
@@ -17,6 +18,7 @@ import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePred
 import org.openqa.selenium.By;
 
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -58,5 +60,21 @@ public interface WaitConditions {
 
     static DriverFunction<Boolean> waitWith(LazyElementWaitParameters data, Function<LazyElement, DriverFunction<Boolean>> conditionGetter, String option, String message) {
         return SeleniumUtilities.isNotNullLazyElementWaitParametersData(data) ? waitWith(data.object, conditionGetter, option, data.interval, data.duration, message) : DriverFunctionConstants.NULL_BOOLEAN;
+    }
+
+    static DriverFunction<Boolean> waitWith(DriverFunction<Boolean> conditionGetter, Predicate<Data<Boolean>> exitCondition, int interval, int timeout, String message) {
+        return ExecutionCore.ifDriver(
+            "waitConditionCore",
+            NullablePredicates.isNotNull(conditionGetter),
+            DriverFunctionFactory.getFunction(
+                WaitFunctions.core(WaitDataFactory.getWith(
+                    conditionGetter,
+                    exitCondition,
+                    message,
+                    WaitTimeDataFactory.getWithDefaultClock(interval, timeout)
+                ))
+            ),
+            DataFactoryFunctions.prependMessage(CoreDataConstants.NULL_BOOLEAN, "There were parameter issues" + CoreFormatterConstants.END_LINE)
+        );
     }
 }

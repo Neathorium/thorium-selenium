@@ -18,7 +18,7 @@ public interface ExecuteCoreValidators {
             );
         }
 
-        return getNamedErrorMessageOrEmpty("isInvalidParametersFieldDefaultsData: ", message);
+        return getNamedErrorMessageOrEmpty("isInvalidParametersFieldDefaultsData", message);
     }
 
     static String isInvalidExecuteCoreFunctionData(ExecuteCoreFunctionData<ParametersFieldDefaultsData> executionData) {
@@ -30,6 +30,6 @@ public interface ExecuteCoreValidators {
             );
         }
 
-        return getNamedErrorMessageOrEmpty("isInvalidExecuteCoreFunctionData: ", message);
+        return getNamedErrorMessageOrEmpty("isInvalidExecuteCoreFunctionData", message);
     }
 }

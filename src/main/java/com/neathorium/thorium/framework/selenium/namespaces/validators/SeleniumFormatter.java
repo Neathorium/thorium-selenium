@@ -195,6 +195,10 @@ public interface SeleniumFormatter {
         return getSendKeysErrorMessage(FrameworkCoreFormatter.isNullLazyElementMessage(data) + CoreFormatter.getInputErrorMessage(input));
     }
 
+    static String getSendKeysNotSendingMessagePermitBlank(LazyElement data, String input) {
+        return getSendKeysErrorMessage(FrameworkCoreFormatter.isNullLazyElementMessage(data) + CoreFormatter.isNullMessageWithName(input, "Input"));
+    }
+
     static String getShadowRootElementMessage(String message, boolean status) {
         return message + " Root element " + CoreFormatter.getOptionMessage(status) + "found" + CoreFormatterConstants.END_LINE;
     }
