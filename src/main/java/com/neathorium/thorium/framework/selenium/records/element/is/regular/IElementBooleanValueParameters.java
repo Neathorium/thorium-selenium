@@ -9,9 +9,8 @@ import com.neathorium.thorium.java.extensions.interfaces.functional.TriFunction;
 
 import java.util.function.Function;
 
-public record ElementStringValueParameters<ReturnType>(
-        TriFunction<DriverFunction<String>, Function<Data<String>, Data<ReturnType>>, Data<ReturnType>, DriverFunction<ReturnType>> HANDLER,
-        ElementFormatData<ReturnType> FORMAT_DATA,
-        Function<LazyElement, DriverFunction<ReturnType>> FUNCTION
-) implements IElementValueParameters<String, ReturnType> {}
-
+public interface IElementBooleanValueParameters<ReturnType> extends IElementValueParameters<Boolean, ReturnType> {
+    TriFunction<DriverFunction<Boolean>, Function<Data<Boolean>, Data<ReturnType>>, Data<ReturnType>, DriverFunction<ReturnType>> HANDLER();
+    ElementFormatData<ReturnType> FORMAT_DATA();
+    Function<LazyElement, DriverFunction<ReturnType>> FUNCTION();
+}

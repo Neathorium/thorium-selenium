@@ -7,7 +7,7 @@ import com.neathorium.thorium.framework.selenium.records.SeleniumTypedEnumKeyDat
 import java.util.Map;
 
 public record ExecuteCoreData<HandlerType, ReturnType>(
-        ExecutorData<HandlerType, String, Boolean, ReturnType> DATA,
-        Map<SeleniumTypeKey, DriverFunction<?>> FUNCTION_MAP,
-        SeleniumTypedEnumKeyData<ReturnType> NEGATIVE_KEY_DATA
+    ExecutorData<ReturnType, HandlerType> DATA,
+    Map<SeleniumTypeKey, DriverFunction<?>> FUNCTION_MAP,
+    SeleniumTypedEnumKeyData<ReturnType> NEGATIVE_KEY_DATA
 ) {}

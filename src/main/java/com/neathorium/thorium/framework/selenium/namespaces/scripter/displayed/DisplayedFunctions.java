@@ -21,16 +21,18 @@ import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilit
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import java.util.List;
+
 import static com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore.ifDriver;
 
 public interface DisplayedFunctions {
     private static DriverFunction<Boolean> isDisplayedCore(Data<WebElement> data) {
+        final var nameof = "DisplayedFunctions.isDisplayed";
         return ifDriver(
-            "isDisplayed",
+            nameof,
             SeleniumUtilities.isNotNullWebElement(data),
             driver -> {
-                final var parameter = ScriptExecuteFunctions.handleDataParameterWithDefaults(data);
-                final var result = Driver.executeSingleParameter(Displayed.IS_DISPLAYED_DISPATCHER, parameter).apply(driver);
+                final var result = Driver.executeSingleParameter(Displayed.IS_DISPLAYED_DISPATCHER, List.of(DataFunctions.getObject(data))).apply(driver);
                 return DataPredicates.isValidNonFalse(result) ? (
                     DataFactoryFunctions.getWith(BooleanUtilities.castToBoolean(result.OBJECT()), result.STATUS(), result.MESSAGE())
                 ) : DataFactoryFunctions.replaceMessage(CoreDataConstants.NULL_BOOLEAN, DataFunctions.getFormattedMessage(result));

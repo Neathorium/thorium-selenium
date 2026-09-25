@@ -6,29 +6,11 @@ import com.neathorium.thorium.framework.selenium.records.reflection.InvokerParam
 import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 
 import java.lang.reflect.Method;
-import java.util.Objects;
 import java.util.function.Function;
 
-public class InvokerParameterizedData<ParameterType> implements MethodFunction<Function<ParameterType, Object>> {
-    public final InvokerParameterizedParametersFieldData<ParameterType> parameterData;
-
-    public InvokerParameterizedData(InvokerParameterizedParametersFieldData<ParameterType> parameterData) {
-        this.parameterData = parameterData;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        final var that = (InvokerParameterizedData<?>) o;
-        return Objects.equals(parameterData, that.parameterData);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(parameterData);
-    }
-
+public record InvokerParameterizedData<ParameterType>(
+    InvokerParameterizedParametersFieldData<ParameterType> PARAMETER_DATA
+) implements MethodFunction<Function<ParameterType, Object>> {
     @Override
     public Function<ParameterType, Object> apply(Method method) {
         if (NullablePredicates.isNull(method)) {
@@ -36,13 +18,13 @@ public class InvokerParameterizedData<ParameterType> implements MethodFunction<F
             return InvokerFunctions.regularDefault();
         }
 
-        final var parameters = parameterData.PARAMETERS();
-        if (!parameterData.VALIDATOR().test(parameters)) {
+        final var parameters = PARAMETER_DATA.PARAMETERS();
+        if (!PARAMETER_DATA.VALIDATOR().test(parameters)) {
             // TODO: Data message.
             //throw new InvalidParameterException("Data parameter value field(s) didn't pass validation" + Strings.END_LINE);
             return InvokerFunctions.regularDefault();
         }
 
-        return base -> parameterData.HANDLER().apply(method, base, parameters);
+        return base -> PARAMETER_DATA.HANDLER().apply(method, base, parameters);
     }
 }

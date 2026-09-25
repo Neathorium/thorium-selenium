@@ -3,7 +3,7 @@ package com.neathorium.thorium.framework.selenium.namespaces.validators;
 import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
 import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.exceptions.namespaces.ExceptionFunctions;
-import com.neathorium.thorium.framework.selenium.abstracts.regular.AbstractElementValueParameters;
+import com.neathorium.thorium.framework.selenium.abstracts.regular.IElementValueParameters;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumCoreConstants;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumDataConstants;
 import com.neathorium.thorium.framework.selenium.constants.validators.SeleniumFormatterConstants;
@@ -36,7 +36,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 
 import static com.neathorium.thorium.framework.selenium.namespaces.utilities.SeleniumUtilities.getLocator;
@@ -62,19 +61,19 @@ public interface SeleniumFormatter {
     }
 
     static String getInvokeMethodCommonMessage(InvokeCommonMessageParametersData data, Exception exception) {
-        return (NullablePredicates.areNotNull(data, exception) && StringUtilities.areNotBlank(data.MESSAGE, data.PARAMETER_TYPES, data.RETURN_TYPE)) ? (
-            getInvokeMethodCoreMessage(exception, data.MESSAGE, data.PARAMETER_TYPES, data.RETURN_TYPE)
+        return (NullablePredicates.areNotNull(data, exception) && StringUtilities.areNotBlank(data.MESSAGE(), data.PARAMETER_TYPES(), data.RETURN_TYPE())) ? (
+            getInvokeMethodCoreMessage(exception, data.MESSAGE(), data.PARAMETER_TYPES(), data.RETURN_TYPE())
         ) : "Data parameter" + CoreFormatterConstants.WAS_NULL;
     }
 
     static String getInvokeMethodParameterizedMessage(InvokeParameterizedMessageData data, Exception exception) {
-        if (NullablePredicates.areAnyNull(data, exception) || StringUtilities.areAnyBlank(data.MESSAGE, data.PARAMETER_TYPES, data.RETURN_TYPE)) {
+        if (NullablePredicates.areAnyNull(data, exception) || StringUtilities.areAnyBlank(data.MESSAGE(), data.PARAMETER_TYPES(), data.RETURN_TYPE())) {
             return "Data parameter" + CoreFormatterConstants.WAS_NULL;
         }
 
-        final var parameter = data.parameter;
+        final var parameter = data.PARAMETER();
         final var parameterMessage = (isNotBlank(parameter) ? "Parameter was specified: " + parameter : "Parameter wasn't specified") + CoreFormatterConstants.END_LINE;
-        final var invokeMessage = getInvokeMethodCoreMessage(exception, data.MESSAGE, data.PARAMETER_TYPES, data.RETURN_TYPE);
+        final var invokeMessage = getInvokeMethodCoreMessage(exception, data.MESSAGE(), data.PARAMETER_TYPES(), data.RETURN_TYPE());
         return isNotBlank(invokeMessage) ? invokeMessage + parameterMessage : CoreFormatterConstants.EMPTY;
     }
 
@@ -123,14 +122,14 @@ public interface SeleniumFormatter {
         return getNamedErrorMessageOrEmpty("isValidElementFormatData", message);
     }
 
-    static String isValidElementValueParametersMessage(AbstractElementValueParameters<?, ?> parameters) {
+    static String isValidElementValueParametersMessage(IElementValueParameters<?, ?> parameters) {
         final var baseName = "Element Value Parameters";
         var message = CoreFormatter.isNullMessageWithName(parameters, baseName);
         if (isBlank(message)) {
             message += (
-                CoreFormatter.isNullMessageWithName(parameters.function, baseName + " Function") +
-                CoreFormatter.isNullMessageWithName(parameters.handler, baseName + " Handler") +
-                isValidElementFormatData(parameters.formatData)
+                CoreFormatter.isNullMessageWithName(parameters.FUNCTION(), baseName + " Function") +
+                CoreFormatter.isNullMessageWithName(parameters.HANDLER(), baseName + " Handler") +
+                isValidElementFormatData(parameters.FORMAT_DATA())
             );
         }
 
@@ -142,9 +141,9 @@ public interface SeleniumFormatter {
         var message = CoreFormatter.isNullMessageWithName(parameters, baseName);
         if (isBlank(message)) {
             message += (
-                CoreFormatter.isNullMessageWithName(parameters.function, baseName + " Function") +
-                CoreFormatter.isNullMessageWithName(parameters.handler, baseName + " Handler") +
-                isValidElementFormatData(parameters.formatData)
+                CoreFormatter.isNullMessageWithName(parameters.FUNCTION(), baseName + " Function") +
+                CoreFormatter.isNullMessageWithName(parameters.HANDLER(), baseName + " Handler") +
+                isValidElementFormatData(parameters.FORMAT_DATA())
             );
         }
 
@@ -216,17 +215,17 @@ public interface SeleniumFormatter {
     }
 
     static <T> String getSwitchToMessage(boolean status, SwitchResultMessageData<T> data) {
-        final var target = data.target;
-        var message = data.nameof + (status ? SeleniumFormatterConstants.SUCCESSFULLY_SWITCHED_TO : SeleniumFormatterConstants.COULDNT_SWITCH_TO) + data.type;
+        final var target = data.TARGET();
+        var message = data.NAMEOF() + (status ? SeleniumFormatterConstants.SUCCESSFULLY_SWITCHED_TO : SeleniumFormatterConstants.COULDNT_SWITCH_TO) + data.TYPE();
 
-        if (!Objects.isNull(target)) {
+        if (NullablePredicates.isNotNull(target)) {
             message += "(\"" + target + "\")";
         }
 
         return message + CoreFormatterConstants.END_LINE;
     }
 
-    static String isElementFunctionMessage(LazyElement element, AbstractElementValueParameters<?, ?> parameters) {
+    static String isElementFunctionMessage(LazyElement element, IElementValueParameters<?, ?> parameters) {
         final var message = FrameworkCoreFormatter.isNullLazyElementMessage(element) + isValidElementValueParametersMessage(parameters);
         return getNamedErrorMessageOrEmpty("isElementFunctionMessage", message);
     }

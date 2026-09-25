@@ -5,7 +5,6 @@ import com.neathorium.thorium.core.data.namespaces.DataFunctions;
 import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
 import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
 import com.neathorium.thorium.core.data.records.Data;
-import com.neathorium.thorium.framework.selenium.abstracts.reflection.BaseInvokerDefaultsData;
 import com.neathorium.thorium.framework.selenium.constants.MethodDefaults;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumCoreConstants;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumDataConstants;
@@ -14,6 +13,7 @@ import com.neathorium.thorium.framework.selenium.constants.SeleniumInvokeFunctio
 import com.neathorium.thorium.framework.selenium.constants.SeleniumMethodDefaults;
 import com.neathorium.thorium.framework.selenium.implementations.reflection.message.ParameterizedMessageData;
 import com.neathorium.thorium.framework.selenium.implementations.reflection.message.RegularMessageData;
+import com.neathorium.thorium.framework.selenium.interfaces.IBaseInvokerDefaults;
 import com.neathorium.thorium.framework.selenium.namespaces.InvokerFunctions;
 import com.neathorium.thorium.framework.selenium.namespaces.SeleniumExecutor;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
@@ -35,6 +35,7 @@ import com.neathorium.thorium.framework.selenium.repositories.method.records.Met
 import com.neathorium.thorium.framework.selenium.repositories.method.records.MethodParametersData;
 import com.neathorium.thorium.framework.selenium.repositories.method.records.reflection.InvokeMethodData;
 import com.neathorium.thorium.java.extensions.namespaces.ArrayFunctions;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.AmountPredicates;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
 import org.apache.commons.lang3.StringUtils;
@@ -52,17 +53,17 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public interface ElementInvokeFunctions {
     private static <HandlerType, ParameterType, ReturnType> Data<ReturnType> invoke(
         Data<MethodData> data,
-        BaseInvokerDefaultsData<ParameterType, HandlerType, ReturnType> defaults,
+        IBaseInvokerDefaults<ParameterType, HandlerType, ReturnType> defaults,
         Function<InvokeCommonMessageParametersData, Function<Exception, String>> messageHandler,
         HandlerType handler,
         ParameterType parameter
     ) {
         final var nameof = "invokeCore";
-        final var castData = defaults.CAST_DATA;
+        final var castData = defaults.CAST_DATA();
         final var methodData = data.OBJECT();
         final var method = methodData.METHOD();
-        final var function = castData.CASTER.compose(defaults.CONSTRUCTOR.apply(handler).apply(method));
-        final var result = defaults.CAST_HANDLER.apply(new HandleResultData<>(function, parameter, castData.DEFAULT_VALUE));
+        final var function = castData.CASTER.compose(defaults.CONSTRUCTOR().apply(handler).apply(method));
+        final var result = defaults.CAST_HANDLER().apply(new HandleResultData<>(function, parameter, castData.DEFAULT_VALUE));
 
         final var status = DataPredicates.isValidNonFalse(result);
         final var message = (BooleanUtilities.isFalse(status)) ? (
@@ -76,7 +77,7 @@ public interface ElementInvokeFunctions {
 
     private static <HandlerType, ParameterType, ReturnType> Data<ReturnType> invoke(
         Data<MethodData> data,
-        BaseInvokerDefaultsData<ParameterType, HandlerType, ReturnType> defaults,
+        IBaseInvokerDefaults<ParameterType, HandlerType, ReturnType> defaults,
         Function<InvokeCommonMessageParametersData, Function<Exception, String>> messageHandler,
         HandlerType handler,
         Data<ParameterType> parameter
@@ -86,7 +87,7 @@ public interface ElementInvokeFunctions {
 
     private static <ParameterType, HandlerType, ReturnType> Function<Data<ParameterType>, Data<ReturnType>> invoke(
         Data<MethodData> data,
-        BaseInvokerDefaultsData<ParameterType, HandlerType, ReturnType> defaults,
+        IBaseInvokerDefaults<ParameterType, HandlerType, ReturnType> defaults,
         Function<InvokeCommonMessageParametersData, Function<Exception, String>> messageHandler,
         HandlerType handler
     ) {
@@ -96,7 +97,7 @@ public interface ElementInvokeFunctions {
     private static <ParameterType, HandlerType, ReturnType> Data<ReturnType> invoke(
         String name,
         Data<MethodData> data,
-        BaseInvokerDefaultsData<ParameterType, HandlerType, ReturnType> defaults,
+        IBaseInvokerDefaults<ParameterType, HandlerType, ReturnType> defaults,
         Function<InvokeCommonMessageParametersData, Function<Exception, String>> messageHandler,
         HandlerType handler,
         ParameterType parameter
@@ -111,7 +112,7 @@ public interface ElementInvokeFunctions {
     private static <ParameterType, HandlerType, ReturnType> DriverFunction<ReturnType> invoke(
         String name,
         Data<MethodData> data,
-        BaseInvokerDefaultsData<ParameterType, HandlerType, ReturnType> defaults,
+        IBaseInvokerDefaults<ParameterType, HandlerType, ReturnType> defaults,
         Function<InvokeCommonMessageParametersData, Function<Exception, String>> messageHandler,
         HandlerType handler,
         DriverFunction<ParameterType> getter
@@ -129,10 +130,11 @@ public interface ElementInvokeFunctions {
         }
 
         final var methodData = MethodRepositoryFunctions.getMethod(SeleniumCoreConstants.DEFAULT_WEB_ELEMENT_METHOD_PARAMETERS, SeleniumMethodDefaults.FIND_ELEMENT);
-        final var handler = new InvokerParameterizedParametersFieldData<>(ArrayFunctions.toSingleElementArray(locator), SeleniumInvokeFunctionDefaults.SEARCH_CONTEXT_SINGLE_PARAMETER.validator, SeleniumInvokeFunctionDefaults.SEARCH_CONTEXT_SINGLE_PARAMETER.handler);
+        final var handler = new InvokerParameterizedParametersFieldData<SearchContext>(ArrayFunctions.toSingleElementArray(locator), AmountPredicates::isSingle, InvokerFunctions::invokeWithParameters);
         final var messageHandler = new ParameterizedMessageData(locator.toString(), SeleniumFormatter::getInvokeMethodParameterizedMessageFunction);
         return invoke("invokeGetElement", methodData, SeleniumInvokeFunctionDefaults.SEARCH_CONTEXT_PARAMETERS, messageHandler, handler, context.OBJECT());
     }
+
 
     static Function<Data<SearchContext>, Data<WebElement>> invokeGetElement(By locator) {
         final var message = CoreFormatter.isNullMessageWithName(locator, "Locator");
@@ -155,8 +157,8 @@ public interface ElementInvokeFunctions {
     }
 
     private static DriverFunction<Boolean> invokeElementBooleanMethod(LazyElement element, InvokeMethodData invokeData) {
-        final var localName = invokeData.nameof;
-        final var parameterData = invokeData.parametersData;
+        final var localName = invokeData.NAMEOF();
+        final var parameterData = invokeData.PARAMETERS_DATA();
         final var nameof = isNotBlank(localName) ? localName : "invokeElementBooleanMethod";
 
         final var errorMessage = FrameworkCoreFormatter.isNullLazyElementMessage(element) + MethodParametersDataValidators.isValid(parameterData);
@@ -191,7 +193,7 @@ public interface ElementInvokeFunctions {
         }
 
         final var methodData = MethodRepositoryFunctions.getMethod(SeleniumCoreConstants.DEFAULT_WEB_ELEMENT_METHOD_PARAMETERS, parameterData);
-        final var handler = new InvokerParameterizedParametersFieldData<>(ArrayFunctions.toSingleElementArray(parameter, StringUtils::isNotBlank), SeleniumInvokeFunctionDefaults.SINGLE_PARAMETER.validator, SeleniumInvokeFunctionDefaults.SINGLE_PARAMETER.handler);
+        final var handler = new InvokerParameterizedParametersFieldData<WebElement>(ArrayFunctions.toSingleElementArray(parameter, StringUtils::isNotBlank), AmountPredicates::isSingle, InvokerFunctions::invokeWithParameters);
         final var messageHandler = new ParameterizedMessageData(parameter, SeleniumFormatter::getInvokeMethodParameterizedMessageFunction);
         final var result = invoke(nameof, methodData, SeleniumInvokeFunctionDefaults.STRING_PARAMETERS, messageHandler, handler, element.get());
         return DriverFunctionFactory.prependMessage(result, parameterData.METHOD_NAME() + CoreFormatterConstants.COLON_SPACE);
@@ -245,13 +247,19 @@ public interface ElementInvokeFunctions {
     static DriverFunction<Void> sendKeys(LazyElement element, String parameter) {
         final var nameof = "sendKeys";
         final var errorMessage = FrameworkCoreFormatter.isNullLazyElementMessage(element) + isNullMessageWithName(parameter, "Send keys value");
-        if (isNotBlank(errorMessage)) {
+        if (StringUtils.isNotBlank(errorMessage)) {
             return driver -> DataFactoryFunctions.getInvalidWith(null, nameof, errorMessage);
         }
 
         final var methodParameterData = MethodDefaults.SEND_KEYS;
         final var methodData = MethodRepositoryFunctions.getMethod(SeleniumCoreConstants.DEFAULT_WEB_ELEMENT_METHOD_PARAMETERS, methodParameterData);
-        final var handler = new InvokerParameterizedParametersFieldData<>(ArrayFunctions.toSingleElementArray(new CharSequence[]{parameter}, NullablePredicates::isNotNull), SeleniumInvokeFunctionDefaults.SINGLE_PARAMETER.validator, SeleniumInvokeFunctionDefaults.SINGLE_PARAMETER.handler);
+
+        final var handler = new InvokerParameterizedParametersFieldData<WebElement>(
+            ArrayFunctions.toSingleElementArray(new CharSequence[]{parameter}, NullablePredicates::isNotNull),
+            AmountPredicates::isSingle,
+            InvokerFunctions::invokeWithParameters
+        );
+
         final var messageHandler = new ParameterizedMessageData(parameter, SeleniumFormatter::getInvokeMethodParameterizedMessageFunction);
         final var result = invoke(nameof, methodData, SeleniumInvokeFunctionDefaults.VOID_PARAMETERS, messageHandler, handler, element.get());
         return DriverFunctionFactory.prependMessage(result, methodParameterData.METHOD_NAME() + CoreFormatterConstants.COLON_SPACE);

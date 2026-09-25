@@ -3,13 +3,13 @@ package com.neathorium.thorium.framework.selenium.namespaces;
 import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
 import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.ScriptFunction;
-import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.ScriptHandlerFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.utilities.SeleniumUtilities;
 import com.neathorium.thorium.framework.selenium.namespaces.validators.ScriptExecutions;
 import com.neathorium.thorium.framework.selenium.records.scripter.ScriptParametersData;
 import com.neathorium.thorium.core.constants.CoreConstants;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public interface ScriptExecuteFunctions {
     static <T extends Data> Object[] handleDataParameter(ScriptParametersData<T> data) {
@@ -17,8 +17,8 @@ public interface ScriptExecuteFunctions {
             return CoreConstants.EMPTY_OBJECT_ARRAY;
         }
 
-        final var parameters = data.parameters;
-        return data.validator.test(parameters) ? data.converter.apply(parameters) : CoreConstants.EMPTY_OBJECT_ARRAY;
+        final var parameters = data.PARAMETERS();
+        return data.VALIDATOR().test(parameters) ? data.CONVERTER().apply(parameters) : CoreConstants.EMPTY_OBJECT_ARRAY;
     }
 
     static <T> Object[] handleParameter(ScriptParametersData<T> data) {
@@ -26,15 +26,15 @@ public interface ScriptExecuteFunctions {
             return CoreConstants.EMPTY_OBJECT_ARRAY;
         }
 
-        final var parameters = data.parameters;
-        return data.validator.test(parameters) ? data.converter.apply(parameters) : CoreConstants.EMPTY_OBJECT_ARRAY;
+        final var parameters = data.PARAMETERS();
+        return data.VALIDATOR().test(parameters) ? data.CONVERTER().apply(parameters) : CoreConstants.EMPTY_OBJECT_ARRAY;
     }
 
-    static ScriptHandlerFunction executeScript() {
+    static ScriptFunction<Function<String, Object>> executeScript() {
         return executor -> executor::executeScript;
     }
 
-    static ScriptHandlerFunction executeAsyncScript() {
+    static ScriptFunction<Function<String, Object>> executeAsyncScript() {
         return executor -> executor::executeAsyncScript;
     }
 

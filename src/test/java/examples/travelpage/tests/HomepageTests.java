@@ -11,7 +11,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class HomepageTests {
+class HomepageTests {
     @Test
     void homepageTest() {
         final var result = SeleniumExecutor.execute(
@@ -26,7 +26,7 @@ public class HomepageTests {
     }
 
     @AfterAll
-    public static void teardown() {
+    static void teardown() {
         FFDriverFunctions.unregister();
     }
 }
