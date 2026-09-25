@@ -1,5 +1,7 @@
 package com.neathorium.thorium.framework.selenium.namespaces.validators;
 
+import com.neathorium.thorium.core.data.records.Data;
+import com.neathorium.thorium.core.records.caster.CastData;
 import com.neathorium.thorium.framework.selenium.interfaces.BaseFunctionalData;
 import com.neathorium.thorium.framework.selenium.interfaces.IBaseInvokerDefaults;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.ScriptFunction;
@@ -9,8 +11,6 @@ import com.neathorium.thorium.framework.selenium.interfaces.scripter.IExecutorRe
 import com.neathorium.thorium.framework.selenium.records.scripter.ScriptParametersData;
 import com.neathorium.thorium.core.constants.CastDataConstants;
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
-import com.neathorium.thorium.core.records.caster.BasicCastData;
-import com.neathorium.thorium.core.records.caster.WrappedCastData;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
 import org.apache.commons.lang3.StringUtils;
@@ -37,28 +37,28 @@ public interface ScriptExecutions {
         return NullablePredicates.isNotNull(data) && NullablePredicates.areNotNull(data.CONVERTER(), data.PARAMETERS(), data.VALIDATOR());
     }
 
-    static <T> boolean isValidCastData(WrappedCastData<T> data) {
-        return NullablePredicates.isNotNull(data) && NullablePredicates.areNotNull(data.CASTER, data.DEFAULT_VALUE);
+    static <T> boolean isValidCastData(CastData<Data<T>, T> data) {
+        return NullablePredicates.isNotNull(data) && NullablePredicates.areNotNull(data.CASTER(), data.DEFAULT_VALUE());
     }
 
-    static <T> String isInvalidCastDataMessage(BasicCastData<T> data) {
+    static <T> String isInvalidCastDataMessage(CastData<T, T> data) {
         final var baseName = "Basic Cast Data";
         var message = CoreFormatter.isNullMessageWithName(data, baseName);
         if (StringUtils.isBlank(message)) {
             message += (
-                CoreFormatter.isNullMessageWithName(data.CASTER, baseName + "Caster") +
-                CoreFormatter.isNullMessageWithName(data.DEFAULT_VALUE, baseName + "Default value")
+                CoreFormatter.isNullMessageWithName(data.CASTER(), baseName + "Caster") +
+                CoreFormatter.isNullMessageWithName(data.DEFAULT_VALUE(), baseName + "Default value")
             );
         }
 
         return getNamedErrorMessageOrEmpty("isInvalidCastDataMessage: ", message);
     }
 
-    static <T> String isInvalidVoidCastDataMessage(BasicCastData<T> data) {
+    static <T> String isInvalidVoidCastDataMessage(CastData<T, T> data) {
         final var baseName = "Basic Cast Data(Void)";
         var message = CoreFormatter.isNullMessageWithName(data, baseName);
         if (StringUtils.isBlank(message)) {
-            message += CoreFormatter.isNullMessageWithName(data.CASTER, baseName + "Caster");
+            message += CoreFormatter.isNullMessageWithName(data.CASTER(), baseName + "Caster");
         }
 
         return getNamedErrorMessageOrEmpty("isInvalidCastDataMessage: ", message);

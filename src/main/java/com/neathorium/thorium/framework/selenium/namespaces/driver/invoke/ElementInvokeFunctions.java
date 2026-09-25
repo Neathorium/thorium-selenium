@@ -62,8 +62,8 @@ public interface ElementInvokeFunctions {
         final var castData = defaults.CAST_DATA();
         final var methodData = data.OBJECT();
         final var method = methodData.METHOD();
-        final var function = castData.CASTER.compose(defaults.CONSTRUCTOR().apply(handler).apply(method));
-        final var result = defaults.CAST_HANDLER().apply(new HandleResultData<>(function, parameter, castData.DEFAULT_VALUE));
+        final var function = castData.CASTER().compose(defaults.CONSTRUCTOR().apply(handler).apply(method));
+        final var result = defaults.CAST_HANDLER().apply(new HandleResultData<>(function, parameter, castData.DEFAULT_VALUE()));
 
         final var status = DataPredicates.isValidNonFalse(result);
         final var message = (BooleanUtilities.isFalse(status)) ? (

@@ -1,5 +1,7 @@
 package com.neathorium.thorium.framework.selenium.namespaces.element.validators;
 
+import com.neathorium.thorium.core.data.records.Data;
+import com.neathorium.thorium.core.records.caster.CastData;
 import com.neathorium.thorium.core.wait.records.WaitTimeData;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.utilities.SeleniumUtilities;
@@ -7,7 +9,6 @@ import com.neathorium.thorium.framework.selenium.records.lazy.LazyElement;
 import com.neathorium.thorium.framework.selenium.records.lazy.filtered.LazyFilteredElementParameters;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
-import com.neathorium.thorium.core.records.caster.WrappedCastData;
 import com.neathorium.thorium.framework.core.abstracts.AbstractLazyResult;
 import com.neathorium.thorium.framework.core.namespaces.extensions.boilers.LazyLocatorList;
 import com.neathorium.thorium.framework.core.namespaces.validators.FrameworkCoreFormatter;
@@ -29,8 +30,8 @@ public interface ElementParameters {
         if (isBlank(message)) {
             message += (
                 CoreFormatter.isNullMessageWithName(timeData.CLOCK(), "TimeData clock") +
-                CoreFormatter.isNullMessageWithName(timeData.INTERVAL(), "TimeData interval") +
-                CoreFormatter.isNullMessageWithName(timeData.DURATION(), "TimeData duration")
+                CoreFormatter.isNullMessageWithName(timeData.ENTRY_PAIR_DATA().INTERVAL(), "TimeData interval") +
+                CoreFormatter.isNullMessageWithName(timeData.ENTRY_PAIR_DATA().DURATION(), "TimeData duration")
             );
         }
 
@@ -59,7 +60,7 @@ public interface ElementParameters {
     }
 
 
-    static <T> String validateCommonElementMethodParamaters(WrappedCastData<T> castData, BiPredicate<Method, String> condition, String methodName) {
+    static <T> String validateCommonElementMethodParamaters(CastData<Data<T>, T> castData, BiPredicate<Method, String> condition, String methodName) {
         return (
             CoreFormatter.isNullMessageWithName(castData, "Generic cast type instance") +
             CoreFormatter.isNullMessageWithName(condition, "Condition method") +
@@ -67,18 +68,18 @@ public interface ElementParameters {
         );
     }
 
-    static <T, U> String validateElementMethodParameters(DriverFunction<WebElement> element, WrappedCastData<T> castData, BiPredicate<Method, String> condition, String methodName) {
+    static <T, U> String validateElementMethodParameters(DriverFunction<WebElement> element, CastData<Data<T>, T> castData, BiPredicate<Method, String> condition, String methodName) {
         return (
             CoreFormatter.isNullMessageWithName(element, "Element") +
             validateCommonElementMethodParamaters(castData, condition, methodName)
         );
     }
 
-    static <T, U> String validateElementMethodParameters(LazyElement element, WrappedCastData<T> castData, BiPredicate<Method, String> condition, String methodName) {
+    static <T, U> String validateElementMethodParameters(LazyElement element, CastData<Data<T>, T> castData, BiPredicate<Method, String> condition, String methodName) {
         return validateElementMethodParameters(element.get(), castData, condition, methodName);
     }
 
-    static <T, U> String validateElementMethodParameters(AbstractLazyResult<T> element, WrappedCastData<T> castData, BiPredicate<Method, String> condition, String methodName) {
+    static <T, U> String validateElementMethodParameters(AbstractLazyResult<T> element, CastData<Data<T>, T> castData, BiPredicate<Method, String> condition, String methodName) {
         return (
             FrameworkCoreFormatter.isNullLazyElementMessage(element) +
             validateCommonElementMethodParamaters(castData, condition, methodName)

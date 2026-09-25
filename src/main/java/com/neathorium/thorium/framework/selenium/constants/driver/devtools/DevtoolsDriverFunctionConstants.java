@@ -1,9 +1,10 @@
 package com.neathorium.thorium.framework.selenium.constants.driver.devtools;
 
+import com.neathorium.thorium.core.platform.namespaces.systemidentity.BasicSystemIdentityFunctions;
 import com.neathorium.thorium.framework.selenium.namespaces.SeleniumExecutor;
 import com.neathorium.thorium.framework.selenium.namespaces.element.Element;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
-import com.neathorium.thorium.core.namespaces.systemidentity.BasicSystemIdentityFunctions;
+
 import com.neathorium.thorium.core.platform.enums.PlatformKey;
 import com.neathorium.thorium.core.platform.namespaces.PlatformFunctions;
 import com.neathorium.thorium.framework.selenium.namespaces.utilities.driver.DevtoolsDriverUtilities;
