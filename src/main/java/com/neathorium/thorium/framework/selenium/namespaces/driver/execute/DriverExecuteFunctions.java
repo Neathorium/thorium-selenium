@@ -62,13 +62,13 @@ public interface DriverExecuteFunctions {
         final var nameof = "executeCore";
         final var castData = data.CAST_DATA();
         final var executor = data.GETTER().apply(driver);
-        final var defaultValue = castData.DEFAULT_VALUE.OBJECT();
+        final var defaultValue = castData.DEFAULT_VALUE().OBJECT();
         if (DataPredicates.isInvalidOrFalse(executor)) {
             return DataFactoryFunctions.getInvalidWith(defaultValue, nameof, "Executor" + CoreFormatterConstants.WAS_NULL);
         }
 
 
-        final var function = castData.CASTER.compose(DriverExecuteFunctions.handleData(executor.OBJECT(), handler));
+        final var function = castData.CASTER().compose(DriverExecuteFunctions.handleData(executor.OBJECT(), handler));
         final var resultFunctions = data.RESULT_HANDLER();
         final var result = resultFunctions.CAST_HANDLER().apply(new HandleResultData<>(function, script, defaultValue));
         final var status = result.STATUS();

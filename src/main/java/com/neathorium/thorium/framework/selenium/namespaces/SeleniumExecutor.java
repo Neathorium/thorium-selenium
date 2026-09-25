@@ -2,18 +2,13 @@ package com.neathorium.thorium.framework.selenium.namespaces;
 
 import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
 import com.neathorium.thorium.core.data.records.Data;
+import com.neathorium.thorium.core.executor.namespaces.*;
 import com.neathorium.thorium.framework.selenium.namespaces.executor.SeleniumExecutorUtilities;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.factories.DriverFunctionFactory;
 import com.neathorium.thorium.core.constants.CoreConstants;
 import com.neathorium.thorium.core.constants.ExecutorConstants;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.namespaces.executor.ExecutionParametersDataFactory;
-import com.neathorium.thorium.core.namespaces.executor.ExecutionResultDataFactory;
-import com.neathorium.thorium.core.namespaces.executor.ExecutionStateDataFactory;
-import com.neathorium.thorium.core.namespaces.executor.ExecutionStepsDataFactory;
-import com.neathorium.thorium.core.namespaces.executor.Executor;
-import com.neathorium.thorium.core.namespaces.executor.ExecutorFunctionDataFactory;
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
 import com.neathorium.thorium.core.records.executor.ExecutionParametersData;
 import com.neathorium.thorium.core.records.executor.ExecutionResultData;
@@ -24,6 +19,8 @@ import com.neathorium.thorium.java.extensions.interfaces.functional.TriPredicate
 import com.neathorium.thorium.java.extensions.interfaces.functional.boilers.IGetMessage;
 import org.openqa.selenium.WebDriver;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 import static com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore.ifDriver;
@@ -35,37 +32,51 @@ public interface SeleniumExecutor {
         Data<ReturnType> negative,
         int stepLength
     ) {
-        return ifDriver("executeGuardCore", CoreFormatter.getCommandAmountRangeErrorMessage(stepLength, execution.range), executionChain, negative);
+        return ifDriver("executeGuardCore", CoreFormatter.getCommandAmountRangeErrorMessage(stepLength, execution.RANGE()), executionChain, negative);
     }
 
-    @SafeVarargs
+
     static <ReturnType> DriverFunction<ExecutionResultData<ReturnType>> execute(
         ExecutionParametersData<Function<WebDriver, Data<?>>, DriverFunction<ExecutionResultData<ReturnType>>> execution,
         ExecutionStateData stateData,
-        Function<WebDriver, Data<?>>... steps
+        List<Function<WebDriver, Data<?>>> steps
     ) {
         final var negative = DataFactoryFunctions.getWith(ExecutionResultDataFactory.getWithDefaultState((ReturnType) CoreConstants.STOCK_OBJECT), false, CoreFormatterConstants.EMPTY);
-        return executeGuardCore(execution, DriverFunctionFactory.getFunction(execution.executor.apply(execution.functionData, stateData, steps)), negative, steps.length);
+        return executeGuardCore(execution, DriverFunctionFactory.getFunction(execution.EXECUTOR().apply(execution.FUNCTION_DATA(), stateData, steps)), negative, steps.size());
     }
 
     private static <ReturnType> Data<ReturnType> executeData(
         ExecutionStepsData<WebDriver> stepsData,
         ExecutionParametersData<Function<WebDriver, Data<?>>, DriverFunction<ExecutionResultData<ReturnType>>> execution
     ) {
-        final var result = execute(execution, ExecutionStateDataFactory.getWithDefaults(), stepsData.steps).apply(stepsData.dependency);
-        return DataFactoryFunctions.replaceObject(result, result.OBJECT().result);
+        final var result = execute(execution, ExecutionStateDataFactory.getWithDefaults(), stepsData.STEPS()).apply(stepsData.DEPENDENCY());
+        return DataFactoryFunctions.replaceObject(result, result.OBJECT().RESULT());
+    }
+
+    private static List<Function<WebDriver, Data<?>>> getExecutionSteps(List<DriverFunction<?>> steps) {
+        final var convertedSteps = new ArrayList<Function<WebDriver, Data<?>>>(steps.size());
+
+        for (final DriverFunction<?> step : steps) {
+            convertedSteps.add(step::apply);
+        }
+
+        return convertedSteps;
     }
 
     private static <ReturnType> DriverFunction<ReturnType> executeData(
         ExecutionParametersData<Function<WebDriver, Data<?>>, DriverFunction<ExecutionResultData<ReturnType>>> execution,
-        DriverFunction<?>... steps
+        List<DriverFunction<?>> steps
     ) {
-        return DriverFunctionFactory.getFunction(driver -> executeData(ExecutionStepsDataFactory.getWithStepsAndDependency(steps, driver), execution));
+        final var localSteps = getExecutionSteps(steps);
+        return DriverFunctionFactory.getFunction(driver -> executeData(ExecutionStepsDataFactory.getWithStepsAndDependency(localSteps, driver), execution));
     }
 
-    static <ReturnType> DriverFunction<ReturnType> execute(ExecutionParametersData<Function<WebDriver, Data<?>>, DriverFunction<ExecutionResultData<ReturnType>>> execution, DriverFunction<?>... steps) {
+    static <ReturnType> DriverFunction<ReturnType> execute(
+        ExecutionParametersData<Function<WebDriver, Data<?>>,
+        DriverFunction<ExecutionResultData<ReturnType>>> execution,
+        List<DriverFunction<?>> steps) {
         final var negative = DataFactoryFunctions.getWith((ReturnType) CoreConstants.STOCK_OBJECT, false, CoreFormatterConstants.EMPTY);
-        return executeGuardCore(execution, executeData(execution, steps), negative, steps.length);
+        return executeGuardCore(execution, executeData(execution, steps), negative, steps.size());
     }
 
     static <ReturnType> DriverFunction<ReturnType> execute(IGetMessage stepMessage, DriverFunction<?>... steps) {

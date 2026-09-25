@@ -1444,7 +1444,7 @@ public interface Driver {
         var index = 0;
         var switchData = SeleniumDataConstants.NULL_CONTEXT;
         var current = defaults.DEFAULT_VALUE();
-        final var length = data.INTERNAL_DATA.LIMIT;
+        final var length = data.INTERNAL_DATA.LIMIT();
         var cacheKeyData = new CachedLookupKeysData(name, "", "", 0);
         while (exitCondition.apply(current, index++, length)) {
             switchData = switchToDefaultContent().apply(driver);
