@@ -2,26 +2,18 @@ package com.neathorium.thorium.framework.selenium.constants;
 
 import com.neathorium.thorium.framework.selenium.implementations.reflection.InvokerParameterizedData;
 import com.neathorium.thorium.framework.selenium.implementations.reflection.InvokerRegularData;
-import com.neathorium.thorium.framework.selenium.namespaces.InvokerFunctions;
 import com.neathorium.thorium.framework.selenium.namespaces.SeleniumExceptionHandlers;
 import com.neathorium.thorium.framework.selenium.namespaces.validators.ScriptExecutions;
 import com.neathorium.thorium.core.constants.CastDataConstants;
-import com.neathorium.thorium.core.records.reflection.InvokeParametersFieldDefaultsData;
-
 
 import com.neathorium.thorium.framework.selenium.records.reflection.ParameterizedInvokerDefaultsData;
 import com.neathorium.thorium.framework.selenium.records.reflection.RegularInvokerDefaultsData;
-import com.neathorium.thorium.java.extensions.namespaces.predicates.AmountPredicates;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 
 public abstract class SeleniumInvokeFunctionDefaults {
-    public static final InvokeParametersFieldDefaultsData<WebElement> SINGLE_PARAMETER = new InvokeParametersFieldDefaultsData<>(AmountPredicates::isSingle, InvokerFunctions::invokeWithParameters);
-    public static final InvokeParametersFieldDefaultsData<SearchContext> SEARCH_CONTEXT_SINGLE_PARAMETER = new InvokeParametersFieldDefaultsData<>(AmountPredicates::isSingle, InvokerFunctions::invokeWithParameters);
-    public static final InvokeParametersFieldDefaultsData<WebElement> PARAMETERS = new InvokeParametersFieldDefaultsData<>(AmountPredicates::isNonZero, InvokerFunctions::invokeWithParameters);
-
-    public static final ParameterizedInvokerDefaultsData<WebElement, Object> OBJECT_PARAMETERS = new ParameterizedInvokerDefaultsData<>(
+        public static final ParameterizedInvokerDefaultsData<WebElement, Object> OBJECT_PARAMETERS = new ParameterizedInvokerDefaultsData<>(
         InvokerParameterizedData::new,
         ScriptExecutions::isValidInvokerParameterizedData,
         CastDataConstants.OBJECT,

@@ -6,9 +6,6 @@ import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunction
 import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
 import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.core.wait.exceptions.WaitTimeoutException;
-import com.neathorium.thorium.core.wait.namespaces.WaitFunctions;
-import com.neathorium.thorium.core.wait.namespaces.factories.WaitDataFactory;
-import com.neathorium.thorium.core.wait.namespaces.factories.WaitTimeDataFactory;
 import com.neathorium.thorium.exceptions.constants.ExceptionConstants;
 import com.neathorium.thorium.exceptions.namespaces.ExceptionFunctions;
 import com.neathorium.thorium.framework.selenium.constants.DriverFunctionConstants;
@@ -35,14 +32,12 @@ import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
 import com.neathorium.thorium.java.extensions.namespaces.utilities.StringUtilities;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 import static com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions.getWith;
 import static com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore.ifDriver;
@@ -100,7 +95,7 @@ public interface Execute {
             nameof,
             NullablePredicates.isNotNull(getter),
             driver -> {
-                final var result = Driver.executeSingleParameter(function, ScriptExecuteFunctions.handleDataParameterWithDefaults(getter.apply(driver))).apply(driver);
+                final var result = Driver.executeSingleParameter(function, List.of(getter.apply(driver))).apply(driver);
                 return getWith((T)result.OBJECT(), result.STATUS(), result.MESSAGE());
             },
             defaultValue
@@ -128,15 +123,15 @@ public interface Execute {
             "scrollIntoViewExecutor",
             NullablePredicates.isNotNull(getter),
             driver -> {
-                final var parameters = new ScriptParametersData<>(getter.apply(driver), DataPredicates::isValidNonFalse, SeleniumUtilities::unwrapToArray);
-                final var result = Driver.executeSingleParameter(ScrollIntoView.EXECUTE, ScriptExecuteFunctions.handleDataParameter(parameters)).apply(driver);
+                //final var parameters = new ScriptParametersData<>(, DataPredicates::isValidNonFalse, SeleniumUtilities::unwrapToArray);
+                final var result = Driver.executeSingleParameter(ScrollIntoView.EXECUTE, List.of(getter.apply(driver))).apply(driver);
                 final var resultObject = result.OBJECT();
                 if (DataPredicates.isInvalidOrFalse(result)) {
                     return DataFactoryFunctions.replaceObject(result, NullablePredicates.isNotNull(resultObject));
                 }
 
                 final DriverFunction<Boolean> step = d -> {
-                    final var r = Driver.executeSingleParameter(ScrollIntoView.CHECK, ScriptExecuteFunctions.handleDataParameter(parameters)).apply(d);
+                    final var r = Driver.executeSingleParameter(ScrollIntoView.CHECK, List.of(getter.apply(d))).apply(d);
                     final var status = Boolean.parseBoolean("" + DataFunctions.getObject(r));
                     final var message = "Element was" + (status ? "" : "n't") + " scrolled into view" + CoreFormatterConstants.END_LINE;
                     return DataFactoryFunctions.getWith(status, status, "scrollIntoViewVerifier", message, r.EXCEPTION());
@@ -211,7 +206,8 @@ public interface Execute {
                 final var steps = DataExecutionFunctions.validChain(data.get(), Execute::handleDataParameterDefault, CoreDataConstants.NULL_PARAMETER_ARRAY);
                 final var parameter = SeleniumExecutor.conditionalSequence(Driver.isElementPresent(data), DriverFunctionFactory.getFunction(steps), Object[].class).apply(driver);
 
-                return DataPredicates.isValidNonFalse(parameter) ? Driver.executeSingleParameter(GetStyle.GET_STYLES_IN_JSON, parameter.OBJECT()).apply(driver) : CoreDataConstants.NULL_OBJECT;
+                final var parameters = List.of(DataFunctions.getObject(parameter));
+                return DataPredicates.isValidNonFalse(parameter) ? Driver.executeSingleParameter(GetStyle.GET_STYLES_IN_JSON, parameters).apply(driver) : CoreDataConstants.NULL_OBJECT;
             },
             CoreDataConstants.NULL_OBJECT
         );
@@ -227,7 +223,8 @@ public interface Execute {
                     return DataFactoryFunctions.replaceMessage(SeleniumDataConstants.NULL_ELEMENT, DataFunctions.getFormattedMessage(parameter));
                 }
 
-                final var result = Driver.executeSingleParameter(ShadowRoot.GET_SHADOW_ROOT, parameter.OBJECT()).apply(driver);
+                final var parameters = List.of(DataFunctions.getObject(parameter));
+                final var result = Driver.executeSingleParameter(ShadowRoot.GET_SHADOW_ROOT, parameters).apply(driver);
                 return DataPredicates.isValidNonFalse(result) ? (
                     getWith((WebElement)result.OBJECT(), result.STATUS(), result.MESSAGE())
                 ) : DataFactoryFunctions.replaceMessage(SeleniumDataConstants.NULL_ELEMENT, DataFunctions.getFormattedMessage(data));
@@ -280,10 +277,11 @@ public interface Execute {
             nameof,
             StringUtilities.areNotBlank(attribute, value) && SeleniumUtilities.isNotNullWebElement(element),
             driver -> {
-                final var parametersData = DataFactoryFunctions.getArrayWithName(ArrayUtils.toArray(element, attribute, value));
-                if (DataPredicates.isInvalidOrFalse(parametersData)) {
+                final var parameterList = List.of(element, attribute, value);
+                if (NullablePredicates.isNotNull(parameterList)) {
                     return CoreDataConstants.NULL_STRING;
                 }
+                final var parametersData = DataFactoryFunctions.getWith(parameterList, true, nameof, "List of parameters constructed, length(\"" + parameterList.size() + "\")" + CoreFormatterConstants.END_LINE);
 
                 final var result = Driver.executeParameters(Attribute.SET_ATTRIBUTE, parametersData.OBJECT()).apply(driver);
                 final var returnedValue = String.valueOf(result.OBJECT());
@@ -331,12 +329,8 @@ public interface Execute {
                     return CoreDataConstants.NULL_BOOLEAN;
                 }
 
-                final var parametersData = SeleniumUtilities.unwrapToArray(element);
-                if (NullablePredicates.isNull(parametersData)) {
-                    return CoreDataConstants.NULL_BOOLEAN;
-                }
-
-                final var result = Driver.executeParameters(ClickFunctions.CLICK_DISPATCHER, parametersData).apply(driver);
+                final List<Object> parameters = List.of(DataFunctions.getObject(element));
+                final var result = Driver.executeParameters(ClickFunctions.CLICK_DISPATCHER, parameters).apply(driver);
                 final var returnedValue = String.valueOf(result.OBJECT());
                 final var status = DataPredicates.isValidNonFalse(result);
                 return getWith(BooleanUtilities.castToBoolean(returnedValue), status, "Element was " + CoreFormatter.getOptionMessage(status) + "clicked" + CoreFormatterConstants.END_LINE);

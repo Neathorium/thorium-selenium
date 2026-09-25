@@ -8,16 +8,9 @@ import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
 import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.exceptions.constants.ExceptionConstants;
 import com.neathorium.thorium.exceptions.namespaces.ExceptionFunctions;
-import com.neathorium.thorium.framework.selenium.abstracts.regular.AbstractElementFunctionParameters;
-import com.neathorium.thorium.framework.selenium.constants.DriverFunctionConstants;
-import com.neathorium.thorium.framework.selenium.constants.ElementFinderConstants;
-import com.neathorium.thorium.framework.selenium.constants.ElementFunctionConstants;
-import com.neathorium.thorium.framework.selenium.constants.ExecuteCoreDataConstants;
-import com.neathorium.thorium.framework.selenium.constants.ExecuteCoreFunctionDataConstants;
-import com.neathorium.thorium.framework.selenium.constants.RepositoryConstants;
-import com.neathorium.thorium.framework.selenium.constants.SeleniumCoreConstants;
-import com.neathorium.thorium.framework.selenium.constants.SeleniumDataConstants;
-import com.neathorium.thorium.framework.selenium.constants.SeleniumGetOrderConstants;
+import com.neathorium.thorium.framework.selenium.abstracts.regular.IElementFunctionParameters;
+import com.neathorium.thorium.framework.selenium.constants.*;
+import com.neathorium.thorium.framework.selenium.element.constants.ElementFunctionConstants;
 import com.neathorium.thorium.framework.selenium.constants.driver.quit.QuitFunctionConstants;
 import com.neathorium.thorium.framework.selenium.constants.lazy.GetLazyElementConstants;
 import com.neathorium.thorium.framework.selenium.constants.validators.SeleniumFormatterConstants;
@@ -73,9 +66,12 @@ import com.neathorium.thorium.framework.core.records.ProbabilityData;
 import com.neathorium.thorium.framework.core.records.lazy.ExternalSelectorData;
 import com.neathorium.thorium.framework.core.records.lazy.LazyLocator;
 import com.neathorium.thorium.framework.core.selector.records.SelectorKeySpecificityData;
+import com.neathorium.thorium.framework.selenium.records.scripter.ExecuteParameterizedData;
+import com.neathorium.thorium.framework.selenium.records.scripter.ScriptApplierData;
 import com.neathorium.thorium.java.extensions.classes.DecoratedList;
 import com.neathorium.thorium.java.extensions.classes.boilers.StringSet;
 import com.neathorium.thorium.java.extensions.namespaces.factories.DecoratedListFactory;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.AmountPredicates;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.BasicPredicates;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.SizablePredicates;
@@ -145,35 +141,42 @@ public interface Driver {
 
 
     static DriverFunction<Object> execute(String script) {
-        return DriverExecuteFunctions.execute(ExecuteCoreFunctionDataConstants.EXECUTE, ExecuteCoreDataConstants.EXECUTE_RETURN_OBJECT, script);
+        final var data = new ScriptApplierData<>(ScriptExecuteFunctions.executeScript(), DriverExecuteFunctions::applyRegular);
+        return DriverExecuteFunctions.execute(ExecuteFunctionNameConstants.EXECUTE, data, ExecuteCoreDataConstants.EXECUTE_RETURN_OBJECT, script);
     }
 
     static DriverFunction<Object> executeAsync(String script) {
-        return DriverExecuteFunctions.execute(ExecuteCoreFunctionDataConstants.EXECUTE_ASYNC, ExecuteCoreDataConstants.EXECUTE_RETURN_OBJECT, script);
+        final var data = new ScriptApplierData<>(ScriptExecuteFunctions.executeAsyncScript(), DriverExecuteFunctions::applyRegular);
+        return DriverExecuteFunctions.execute(ExecuteFunctionNameConstants.EXECUTE_ASYNC, data, ExecuteCoreDataConstants.EXECUTE_RETURN_OBJECT, script);
     }
 
-    static DriverFunction<Object> executeParameters(String script, Object[] parameters) {
-        return DriverExecuteFunctions.executeParameters(ExecuteCoreFunctionDataConstants.EXECUTE_PARAMETERS, ExecuteCoreDataConstants.EXECUTE_PARAMETERS_RETURN_OBJECT, script, parameters);
+    static DriverFunction<Object> executeParameters(String script, List<Object> parameters) {
+        final var errors = AmountPredicates.isSingle(parameters::size);
+        final var data = new ScriptApplierData<>(new ExecuteParameterizedData(ScriptExecuteFunctions.executeScriptWithParameters(), parameters), DriverExecuteFunctions::applyParameterized);
+        return DriverExecuteFunctions.execute(ExecuteFunctionNameConstants.EXECUTE_PARAMATERS, data, ExecuteCoreDataConstants.EXECUTE_PARAMETERS_RETURN_OBJECT, script);
     }
 
-    static DriverFunction<Object> executeAsyncParameters(String script, Object[] parameters) {
-        return DriverExecuteFunctions.executeParameters(ExecuteCoreFunctionDataConstants.EXECUTE_ASYNC_PARAMETERS, ExecuteCoreDataConstants.EXECUTE_PARAMETERS_RETURN_OBJECT, script, parameters);
+    static DriverFunction<Object> executeAsyncParameters(String script, List<Object> parameters) {
+        final var data = new ScriptApplierData<>(new ExecuteParameterizedData(ScriptExecuteFunctions.executeAsyncScriptWithParameters(), parameters), DriverExecuteFunctions::applyParameterized);
+        return DriverExecuteFunctions.execute(ExecuteFunctionNameConstants.EXECUTE_ASYNC_PARAMETERS, data, ExecuteCoreDataConstants.EXECUTE_PARAMETERS_RETURN_OBJECT, script);
     }
 
-    static DriverFunction<Object> executeSingleParameter(String script, Object[] parameter) {
-        return DriverExecuteFunctions.executeParameters(ExecuteCoreFunctionDataConstants.EXECUTE_SINGLE_PARAMETER, ExecuteCoreDataConstants.EXECUTE_PARAMETERS_RETURN_OBJECT, script, parameter);
+    static DriverFunction<Object> executeSingleParameter(String script, List<Object> parameters) {
+        final var data = new ScriptApplierData<>(new ExecuteParameterizedData(ScriptExecuteFunctions.executeScriptWithParameters(), parameters), DriverExecuteFunctions::applyParameterized);
+        return DriverExecuteFunctions.execute(ExecuteFunctionNameConstants.EXECUTE_SINGLE_PARAMETER, data, ExecuteCoreDataConstants.EXECUTE_PARAMETERS_RETURN_OBJECT, script);
     }
 
-    static DriverFunction<Object> executeAsyncSingleParameter(String script, Object[] parameter) {
-        return DriverExecuteFunctions.executeParameters(ExecuteCoreFunctionDataConstants.EXECUTE_ASYNC_SINGLE_PARAMETER, ExecuteCoreDataConstants.EXECUTE_PARAMETERS_RETURN_OBJECT, script, parameter);
+    static DriverFunction<Object> executeAsyncSingleParameter(String script, List<Object> parameters) {
+        final var data = new ScriptApplierData<>(new ExecuteParameterizedData(ScriptExecuteFunctions.executeScriptWithParameters(), parameters), DriverExecuteFunctions::applyParameterized);
+        return DriverExecuteFunctions.execute(ExecuteFunctionNameConstants.EXECUTE_ASYNC_SINGLE_PARAMETER, data, ExecuteCoreDataConstants.EXECUTE_PARAMETERS_RETURN_OBJECT, script);
     }
 
     static Function<Data<SearchContext>, Data<WebElement>> invokeGetElement(By locator) {
         return ElementInvokeFunctions.invokeGetElement(locator);
     }
 
-    private static <T, U, V> Data<V> elementCore(V object, Data<T> data, boolean status, String elementName, AbstractElementFunctionParameters<U, V> parameters) {
-        final var formatData = parameters.formatData;
+    private static <T, U, V> Data<V> elementCore(V object, Data<T> data, boolean status, String elementName, IElementFunctionParameters<U, V> parameters) {
+        final var formatData = parameters.FORMAT_DATA();
         var message = formatData.FORMATTER().apply(elementName, formatData.DESCRIPTOR(), object);
         if (BooleanUtilities.isFalse(status)) {
             message += DataFunctions.getFormattedMessage(data);
@@ -184,11 +187,11 @@ public interface Driver {
 
     private static <T> Data<Boolean> isElementCore(String elementName, Data<T> data, ElementConditionParameters<Boolean, Data<T>> parameters) {
         final Predicate<Data<T>> condition = DataPredicates::isValidNonFalse;
-        final var status = parameters.inverter.apply(condition).test(data);
+        final var status = parameters.INVERTER().apply(condition).test(data);
         return elementCore(status, data, status, elementName, parameters);
     }
 
-    private static Data<String> getElementValueCore(String elementName, Data<String> data, AbstractElementFunctionParameters<String, String> parameters) {
+    private static Data<String> getElementValueCore(String elementName, Data<String> data, IElementFunctionParameters<String, String> parameters) {
         final var status = DataPredicates.isValidNonFalse(data);
         return elementCore(data.OBJECT(), data, status, elementName, parameters);
     }
@@ -197,16 +200,16 @@ public interface Driver {
         return data -> isElementCore(elementName, data, parameters);
     }
 
-    private static Function<Data<String>, Data<String>> getElementValueCore(String elementName, AbstractElementFunctionParameters<String, String> parameters) {
+    private static Function<Data<String>, Data<String>> getElementValueCore(String elementName, IElementFunctionParameters<String, String> parameters) {
         return data -> getElementValueCore(elementName, data, parameters);
     }
 
     private static DriverFunction<Boolean> isElementPositive(LazyElement element, ElementConditionParameters<Boolean, Data<Boolean>> parameters, Data<Boolean> guard) {
-        return parameters.handler.apply(parameters.function.apply(element), isElementCore(element.NAME, parameters), DataFactoryFunctions.replaceName(guard, "isElementPositive"));
+        return parameters.HANDLER().apply(parameters.FUNCTION().apply(element), isElementCore(element.NAME, parameters), DataFactoryFunctions.replaceName(guard, "isElementPositive"));
     }
 
-    private static DriverFunction<String> getElementValuePositive(String name, DriverFunction<String> function, AbstractElementFunctionParameters<String, String> parameters, Data<String> guard) {
-        return parameters.handler.apply(function, getElementValueCore(name, parameters), DataFactoryFunctions.replaceName(guard, "getElementValuePositive"));
+    private static DriverFunction<String> getElementValuePositive(String name, DriverFunction<String> function, IElementFunctionParameters<String, String> parameters, Data<String> guard) {
+        return parameters.HANDLER().apply(function, getElementValueCore(name, parameters), DataFactoryFunctions.replaceName(guard, "getElementValuePositive"));
     }
 
     private static DriverFunction<Boolean> isElement(LazyElement element, ElementConditionParameters<Boolean, Data<Boolean>> parameters) {
@@ -221,7 +224,7 @@ public interface Driver {
             return DriverFunctionFactory.get(replaceMessage(negative, "getElementValue", errorMessage));
         }
 
-        return getElementValuePositive(element.NAME, parameters.function.apply(element), parameters, negative);
+        return getElementValuePositive(element.NAME, parameters.FUNCTION().apply(element), parameters, negative);
     }
 
     private static DriverFunction<String> getElementValue(LazyElement element, String value, ElementParameterizedValueParameters<String> parameters) {
@@ -231,51 +234,51 @@ public interface Driver {
             return DriverFunctionFactory.get(replaceMessage(negative, "getElementValue", errorMessage));
         }
 
-        return getElementValuePositive(element.NAME, parameters.function.apply(element, value), parameters, negative);
+        return getElementValuePositive(element.NAME, parameters.FUNCTION().apply(element, value), parameters, negative);
     }
 
     static DriverFunction<Boolean> isElementPresent(LazyElement element) {
-        return isElement(element, ElementFunctionConstants.PRESENT);
+        return Driver.isElement(element, ElementFunctionConstants.PRESENT);
     }
 
     static DriverFunction<Boolean> isElementAbsent(LazyElement element) {
-        return isElement(element, ElementFunctionConstants.ABSENT);
+        return Driver.isElement(element, ElementFunctionConstants.ABSENT);
     }
 
     static DriverFunction<Boolean> isElementDisplayed(LazyElement element) {
-        return isElement(element, ElementFunctionConstants.DISPLAYED);
+        return Driver.isElement(element, ElementFunctionConstants.DISPLAYED);
     }
 
     static DriverFunction<Boolean> isElementEnabled(LazyElement element) {
-        return isElement(element, ElementFunctionConstants.ENABLED);
+        return Driver.isElement(element, ElementFunctionConstants.ENABLED);
     }
 
     static DriverFunction<Boolean> isElementClickable(LazyElement element) {
-        return isElement(element, ElementFunctionConstants.CLICKABLE);
+        return Driver.isElement(element, ElementFunctionConstants.CLICKABLE);
     }
 
     static DriverFunction<Boolean> isElementSelected(LazyElement element) {
-        return isElement(element, ElementFunctionConstants.SELECTED);
+        return Driver.isElement(element, ElementFunctionConstants.SELECTED);
     }
 
     static DriverFunction<Boolean> isElementHidden(LazyElement element) {
-        return isElement(element, ElementFunctionConstants.HIDDEN);
+        return Driver.isElement(element, ElementFunctionConstants.HIDDEN);
     }
 
     static DriverFunction<Boolean> isElementDisabled(LazyElement element) {
-        return isElement(element, ElementFunctionConstants.DISABLED);
+        return Driver.isElement(element, ElementFunctionConstants.DISABLED);
     }
 
     static DriverFunction<Boolean> isElementUnclickable(LazyElement element) {
-        return isElement(element, ElementFunctionConstants.UNCLICKABLE);
+        return Driver.isElement(element, ElementFunctionConstants.UNCLICKABLE);
     }
 
     static DriverFunction<Boolean> isElementUnselected(LazyElement element) {
-        return isElement(element, ElementFunctionConstants.UNSELECTED);
+        return Driver.isElement(element, ElementFunctionConstants.UNSELECTED);
     }
 
     static DriverFunction<Boolean> isElement(Function<LazyElement, DriverFunction<Boolean>> elementCondition, LazyElement element) {
-        return ifDriver("isElement", SeleniumUtilities.isNotNullLazyElement(element) && NullablePredicates.areNotNull(elementCondition), elementCondition.apply(element), CoreDataConstants.PARAMETERS_NULL_BOOLEAN);
+        return ExecutionCore.ifDriver("isElement", SeleniumUtilities.isNotNullLazyElement(element) && NullablePredicates.areNotNull(elementCondition), elementCondition.apply(element), CoreDataConstants.PARAMETERS_NULL_BOOLEAN);
     }
 
     static DriverFunction<Boolean> isElement(Function<LazyElement, DriverFunction<Boolean>> elementCondition, Data<LazyElement> data) {
@@ -1435,12 +1438,12 @@ public interface Driver {
         final var parameterMap = (isCached ? getResult.OBJECT().element : dataElement).PARAMETERS;
         final var keyGetter = isCached ? getNextCachedKey(data.GET_ORDER) : getNextKey(DecoratedListFactory.getWith(parameterMap.keySet()));
         final var typeKeys = isCached ? getResult.OBJECT().typeKeys : ElementRepository.getInitializedTypeKeysMap();
-        final var exitCondition = defaults.EXIT_CONDITION;
+        final var exitCondition = defaults.EXIT_CONDITION();
         var message = new StringBuilder();
         var parameterIndex = 0;
         var index = 0;
         var switchData = SeleniumDataConstants.NULL_CONTEXT;
-        var current = defaults.DEFAULT_VALUE;
+        var current = defaults.DEFAULT_VALUE();
         final var length = data.INTERNAL_DATA.LIMIT;
         var cacheKeyData = new CachedLookupKeysData(name, "", "", 0);
         while (exitCondition.apply(current, index++, length)) {
@@ -1466,18 +1469,18 @@ public interface Driver {
                 continue;
             }
 
-            current = defaults.GETTER.apply(parameters.ELEMENT_FILTER_DATA, locators, parameters.GETTER).apply(driver);
+            current = defaults.GETTER().apply(parameters.ELEMENT_FILTER_DATA, locators, parameters.GETTER).apply(driver);
             message.append(DataFunctions.getFormattedMessage(current));
             message.append(DataFunctions.getFormattedMessage(Adjuster.adjustProbability(parameters, typeKeys, key, DataPredicates.isValidNonFalse(current), data.PROBABILITY_DATA)));
             cacheKeyData = new CachedLookupKeysData(name, keyData.OBJECT().entryName, keyData.OBJECT().strategy, isCached ? keyData.OBJECT().index : ++parameterIndex);
         }
 
-        if (defaults.INVALIDATOR.test(current)) {
-            current = defaults.DEFAULT_VALUE;
+        if (defaults.INVALIDATOR().test(current)) {
+            current = defaults.DEFAULT_VALUE();
         }
 
         final var externalData = data.EXTERNAL_DATA;
-        return defaults.CACHE_FUNCTION.apply(
+        return defaults.CACHE_FUNCTION().apply(
             dataElement,
             DataFactoryFunctions.getWith(new ExternalElementData(typeKeys, current), DataPredicates.isValidNonFalse(current), message.toString()),
             isBlank(FrameworkCoreFormatter.getExternalSelectorDataMessage(externalData)) ? getLazyElementByExternal(dataElement, externalData, typeKeys).apply(driver) : SeleniumDataConstants.NULL_EXTERNAL_ELEMENT

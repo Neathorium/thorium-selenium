@@ -4,23 +4,21 @@ import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunction
 import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.exceptions.constants.ExceptionConstants;
 import com.neathorium.thorium.exceptions.namespaces.ExceptionFunctions;
-import com.neathorium.thorium.framework.selenium.constants.SeleniumExceptionHandlersConstants;
 import com.neathorium.thorium.framework.selenium.constants.validators.SeleniumFormatterConstants;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
 import com.neathorium.thorium.core.namespaces.validators.HandlerResultDataValidator;
 import com.neathorium.thorium.core.records.HandleResultData;
 import com.neathorium.thorium.framework.selenium.method.exceptions.MethodInvokeException;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
 public interface SeleniumExceptionHandlers {
     static <CastParameterType, ReturnType> Data<ReturnType> invokeHandler(HandleResultData<CastParameterType, ReturnType> data) {
-        final var nameof = SeleniumExceptionHandlersConstants.INVOKE_HANDLER;
+        final var nameof = "SeleniumExceptionHandlers.invokeHandler";
         final var defaultValue = data.DEFAULT_VALUE();
         final var errorMessage = HandlerResultDataValidator.isInvalidHandlerResultDataMessage(data);
-        if (isNotBlank(errorMessage)) {
+        if (StringUtils.isNotBlank(errorMessage)) {
             return DataFactoryFunctions.getInvalidWith(defaultValue, nameof, errorMessage);
         }
 
@@ -43,10 +41,10 @@ public interface SeleniumExceptionHandlers {
     }
 
     static <CastParameterType, ReturnType> Data<ReturnType> findElementsHandler(HandleResultData<CastParameterType, ReturnType> data) {
-        final var nameof = SeleniumExceptionHandlersConstants.FIND_ELEMENTS_HANDLER;
+        final var nameof = "SeleniumExceptionHandlers.findElementsHandler";
         final var defaultValue = data.DEFAULT_VALUE();
         final var errorMessage = HandlerResultDataValidator.isInvalidHandlerResultDataMessage(data);
-        if (isNotBlank(errorMessage)) {
+        if (StringUtils.isNotBlank(errorMessage)) {
             return DataFactoryFunctions.getInvalidWith(defaultValue, nameof, errorMessage);
         }
 
@@ -64,10 +62,10 @@ public interface SeleniumExceptionHandlers {
     }
 
     static <CastParameterType, ReturnType> Data<ReturnType> quitHandler(HandleResultData<CastParameterType, ReturnType> data) {
-        final var nameof = SeleniumExceptionHandlersConstants.QUIT_HANDLER;
+        final var nameof = "SeleniumExceptionHandlers.quitHandler";
         final var defaultValue = data.DEFAULT_VALUE();
         final var errorMessage = HandlerResultDataValidator.isInvalidHandlerResultDataMessage(data);
-        if (isNotBlank(errorMessage)) {
+        if (StringUtils.isNotBlank(errorMessage)) {
             return DataFactoryFunctions.getInvalidWith(defaultValue, nameof, errorMessage);
         }
 

@@ -1,6 +1,7 @@
-package com.neathorium.thorium.framework.selenium.constants;
+package com.neathorium.thorium.framework.selenium.element.constants;
 
 import com.neathorium.thorium.core.data.records.Data;
+import com.neathorium.thorium.framework.selenium.constants.ElementFormatDataConstants;
 import com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore;
 import com.neathorium.thorium.framework.selenium.namespaces.driver.invoke.ElementInvokeFunctions;
 import com.neathorium.thorium.framework.selenium.namespaces.validators.SeleniumDataValidators;

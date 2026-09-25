@@ -1,27 +1,12 @@
 package com.neathorium.thorium.framework.selenium.records.reflection.message;
 
-import com.neathorium.thorium.framework.selenium.abstracts.reflection.InvokeBaseMessageData;
+import com.neathorium.thorium.framework.selenium.interfaces.reflection.InvokeBaseMessageData;
 
-import java.util.Objects;
+public record InvokeParameterizedMessageData(
+    String MESSAGE,
+    String RETURN_TYPE,
+    String PARAMETER_TYPES,
+    String PARAMETER
+) implements InvokeBaseMessageData {
 
-public class InvokeParameterizedMessageData extends InvokeBaseMessageData {
-    public final String parameter;
-
-    public InvokeParameterizedMessageData(String message, String returnType, String parameterTypes, String parameter) {
-        super(message, returnType, parameterTypes);
-        this.parameter = parameter;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if ((o == null) || (getClass() != o.getClass()) || !super.equals(o)) return false;
-        final var that = (InvokeParameterizedMessageData) o;
-        return Objects.equals(parameter, that.parameter);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), parameter);
-    }
 }

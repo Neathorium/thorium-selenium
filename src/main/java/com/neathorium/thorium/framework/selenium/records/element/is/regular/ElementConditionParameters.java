@@ -13,51 +13,9 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class ElementConditionParameters<ReturnType, PredicateType> extends ElementBooleanValueParameters<ReturnType> {
-    public final Function<Predicate<PredicateType>, Predicate<PredicateType>> inverter;
-
-    public ElementConditionParameters(
-        TriFunction<DriverFunction<Boolean>, Function<Data<Boolean>, Data<ReturnType>>, Data<ReturnType>, DriverFunction<ReturnType>> handler,
-        ElementFormatData<ReturnType> formatData,
-        Function<LazyElement, DriverFunction<ReturnType>> function,
-        Function<Predicate<PredicateType>, Predicate<PredicateType>> inverter
-    ) {
-        super(handler, formatData, function);
-        this.inverter = inverter;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (
-            NullablePredicates.isNull(o) ||
-            EqualsPredicates.isNotEqual(getClass(), o.getClass()) ||
-            BooleanUtilities.isFalse(super.equals(o))
-        ) {
-            return false;
-        }
-
-        final var that = (ElementConditionParameters<?, ?>) o;
-        return EqualsPredicates.isEqual(inverter, that.inverter);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), inverter);
-    }
-
-    @Override
-    public String toString() {
-        return (
-            "ElementConditionParameters{" +
-            "handler=" + handler +
-            ", formatData=" + formatData +
-            ", function=" + function +
-            ", inverter=" + inverter +
-            '}'
-        );
-    }
-}
+public record ElementConditionParameters<ReturnType, PredicateType>(
+    TriFunction<DriverFunction<Boolean>, Function<Data<Boolean>, Data<ReturnType>>, Data<ReturnType>, DriverFunction<ReturnType>> HANDLER,
+    ElementFormatData<ReturnType> FORMAT_DATA,
+    Function<LazyElement, DriverFunction<ReturnType>> FUNCTION,
+    Function<Predicate<PredicateType>, Predicate<PredicateType>> INVERTER
+) implements IElementBooleanValueParameters<ReturnType> {}

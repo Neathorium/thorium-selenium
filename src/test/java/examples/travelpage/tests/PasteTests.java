@@ -15,7 +15,7 @@ import org.openqa.selenium.Keys;
 import static com.neathorium.thorium.core.namespaces.executor.step.StepFactory.step;
 import static common.AssertionConstants.assertDataTrue;
 
-public class PasteTests {
+class PasteTests {
     @Test
     void homepageTest() {
         final var value = "This is a clipboard item";
@@ -30,10 +30,11 @@ public class PasteTests {
                 FFDriverFunctions.get()
             )
         ).apply());
+
     }
 
     @AfterAll
-    public static void teardown() {
+    static void teardown() {
         FFDriverFunctions.unregister();
     }
 }

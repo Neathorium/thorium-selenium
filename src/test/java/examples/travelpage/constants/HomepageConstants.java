@@ -19,7 +19,7 @@ public abstract class HomepageConstants {
 
     public static final String LOGO_NAME = NAME + "Logo";
     public static final String DESTINATION_FIELD_NAME = NAME + "Destination field";
-    public static final String TAB_NAME = "Tab";
+    public static final String TAB_NAME = NAME + "Tab";
 
     public static final String TAB_LOCATOR = "a[class*='tab-anchor'] > span[class*='tab-text']";
     public static final String LOGO_LOCATOR = "img[alt=*' logo']";
