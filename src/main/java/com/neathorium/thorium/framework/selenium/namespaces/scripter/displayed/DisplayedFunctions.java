@@ -8,7 +8,6 @@ import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.constants.scripts.element.Displayed;
 import com.neathorium.thorium.framework.selenium.enums.SingleGetter;
 import com.neathorium.thorium.framework.selenium.namespaces.Driver;
-import com.neathorium.thorium.framework.selenium.namespaces.ScriptExecuteFunctions;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.factories.DriverFunctionFactory;
 import com.neathorium.thorium.framework.selenium.namespaces.repositories.LocatorRepository;

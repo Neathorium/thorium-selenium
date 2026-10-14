@@ -1,8 +1,11 @@
 package com.neathorium.thorium.framework.selenium.namespaces;
 
+import com.neathorium.thorium.core.data.interfaces.DataSupplier;
 import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
 import com.neathorium.thorium.core.data.records.Data;
+
 import com.neathorium.thorium.core.executor.namespaces.*;
+import com.neathorium.thorium.core.executor.namespaces.step.StepFactory;
 import com.neathorium.thorium.framework.selenium.namespaces.executor.SeleniumExecutorUtilities;
 import com.neathorium.thorium.framework.selenium.namespaces.extensions.boilers.DriverFunction;
 import com.neathorium.thorium.framework.selenium.namespaces.factories.DriverFunctionFactory;
@@ -23,8 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.neathorium.thorium.framework.selenium.namespaces.ExecutionCore.ifDriver;
-
 public interface SeleniumExecutor {
     private static <ReturnType, ParameterReturnType> DriverFunction<ReturnType> executeGuardCore(
         ExecutionParametersData<Function<WebDriver, Data<?>>, DriverFunction<ParameterReturnType>> execution,
@@ -32,7 +33,12 @@ public interface SeleniumExecutor {
         Data<ReturnType> negative,
         int stepLength
     ) {
-        return ifDriver("executeGuardCore", CoreFormatter.getCommandAmountRangeErrorMessage(stepLength, execution.RANGE()), executionChain, negative);
+        return ExecutionCore.ifDriver(
+            "executeGuardCore",
+            CoreFormatter.getCommandAmountRangeErrorMessage(stepLength, execution.RANGE()),
+            executionChain,
+            negative
+        );
     }
 
 
@@ -187,11 +193,15 @@ public interface SeleniumExecutor {
         return execute(message, stateData, SeleniumExecutorUtilities.getStepArray(step, amount));
     }
 
-    static <Any> DriverFunction<Any> repeat(String message, DriverFunction<?> step, int amount) {
+    static <T> DriverFunction<T> repeat(String message, DriverFunction<?> step, int amount) {
         return execute(message, SeleniumExecutorUtilities.getStepArray(step, amount));
     }
 
-    static <Any> DriverFunction<Any> repeat(DriverFunction<?> step, int amount) {
+    static <T> DriverFunction<T> repeat(DriverFunction<?> step, int amount) {
         return execute(SeleniumExecutorUtilities.getStepArray(step, amount));
+    }
+
+    static <T> DataSupplier<T> toStep(Function<String, WebDriver> getter, DriverFunction<T> step) {
+        return StepFactory.step(step, getter, "");
     }
 }

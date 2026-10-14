@@ -5,6 +5,7 @@ import com.neathorium.thorium.framework.selenium.namespaces.DriverWaits;
 import com.neathorium.thorium.framework.selenium.namespaces.SeleniumExecutor;
 import com.neathorium.thorium.framework.selenium.namespaces.element.Element;
 import com.neathorium.thorium.framework.selenium.namespaces.element.ElementExpectedConditions;
+import com.neathorium.thorium.framework.selenium.namespaces.scripter.displayed.DisplayedFunctions;
 import examples.travelpage.constants.HomepageConstants;
 import examples.travelpage.namespaces.FFDriverFunctions;
 import org.junit.jupiter.api.AfterAll;
@@ -18,9 +19,9 @@ class HomepageTests {
             "Go to Homepage",
             DriverWaits.navigateAndWait(System.getProperty("page"), 300, 3000),
             Element.waitDisplayed(HomepageConstants.TAB, 300, 3000),
-            ElementExpectedConditions.isTextEquals(HomepageConstants.TAB, "Stays")
-            /*Element.inputWhenClickable(HomepageConstants.DESTINATION_FIELD_COMPLEX, "XYZ"),
-            DisplayedFunctions.isDisplayed(HomepageConstants.DESTINATION_FIELD_COMPLEX)*/
+            ElementExpectedConditions.isTextEquals(HomepageConstants.TAB, "Stays"),
+            Element.inputWhenClickable(HomepageConstants.DESTINATION_FIELD_COMPLEX, "XYZ"),
+            DisplayedFunctions.isDisplayed(HomepageConstants.DESTINATION_FIELD_COMPLEX)
         ).apply(FFDriverFunctions.get());
         Assertions.assertTrue(result.STATUS(), DataFunctions.getFormattedMessage(result));
     }
