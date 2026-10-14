@@ -5,7 +5,7 @@ import com.neathorium.thorium.core.data.namespaces.DataFunctions;
 import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
 import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
 import com.neathorium.thorium.core.data.records.Data;
-import com.neathorium.thorium.framework.selenium.constants.MethodDefaults;
+import com.neathorium.thorium.framework.selenium.method.constants.MethodDefaults;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumCoreConstants;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumDataConstants;
 import com.neathorium.thorium.framework.selenium.constants.SeleniumInvokeConstants;

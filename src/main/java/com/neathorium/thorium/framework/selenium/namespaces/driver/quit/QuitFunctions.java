@@ -17,7 +17,13 @@ public interface QuitFunctions {
         return null;
     }
 
+    private static Void close(WebDriver driver) {
+        driver.close();
+        return null;
+    }
+
     private static Data<Boolean> quitDriverCore(WebDriver driver) {
+        final var nameof = "quitDriverCore";
         final var data = new HandleResultData<>(QuitFunctions::quit, driver, null);
         final var result = SeleniumExceptionHandlers.quitHandler(data);
         final var exception = result.EXCEPTION();
@@ -27,10 +33,15 @@ public interface QuitFunctions {
             message += "Exception:" + exception.getClass() + " Message: " + exception.getMessage();
         }
 
-        return DataFactoryFunctions.getBoolean(status, "quitDriverCore", message, exception);
+        return DataFactoryFunctions.getBoolean(status, nameof, message, exception);
     }
 
     static DriverFunction<Boolean> quitDriver() {
-        return ExecutionCore.ifDriver("quitDriver", QuitFunctions::quitDriverCore, SeleniumDataConstants.DRIVER_WAS_NULL);
+        final var nameof = "quitDriver";
+        return ExecutionCore.ifDriver(
+            nameof,
+            QuitFunctions::quitDriverCore,
+            SeleniumDataConstants.DRIVER_WAS_NULL
+        );
     }
 }

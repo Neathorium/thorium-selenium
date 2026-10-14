@@ -21,9 +21,9 @@ public abstract class HomepageConstants {
     public static final String DESTINATION_FIELD_NAME = NAME + "Destination field";
     public static final String TAB_NAME = NAME + "Tab";
 
-    public static final String TAB_LOCATOR = "a[class*='tab-anchor'] > span[class*='tab-text']";
+    public static final String TAB_LOCATOR = "a[class*='tab-custom-anchor'] > span[class*='tab-custom-text']";
     public static final String LOGO_LOCATOR = "img[alt=*' logo']";
-    public static final String DESTINATION_FIELD_LOCATOR = "#location-field-destination";
+    public static final String DESTINATION_FIELD_LOCATOR = "input[name='destination_form_field']";
     public static final String DESTINATION_FIELD_LOCATOR_2 = "hotel-destination-hp-hotel";
 
     public static final LazyLocator DEST_LAZY_1 = LazyLocatorFactory.get(DESTINATION_FIELD_LOCATOR, SelectorStrategyNameConstants.CSS_SELECTOR);

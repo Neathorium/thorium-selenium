@@ -1,6 +1,7 @@
 package com.neathorium.thorium.framework.selenium.constants;
 
 import com.neathorium.thorium.core.data.constants.CoreDataConstants;
+import com.neathorium.thorium.core.data.namespaces.DataFunctions;
 import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.framework.selenium.enums.SeleniumTypeKey;
 import com.neathorium.thorium.framework.selenium.namespaces.element.validators.ElementGetterValidators;
@@ -71,18 +72,14 @@ public abstract class DriverFunctionConstants {
     }
 
     private static WebElement getByContainedText(Data<WebElementList> data, String text) {
-        final var list = data.OBJECT();
-        final var size = list.size();
-        var object = SeleniumCoreConstants.STOCK_ELEMENT;
-        var index = 0;
-        for (; (index < size); ++index) {
-            object = list.get(index);
-            if (StringUtilities.contains(object.getText(), text)) {
-                break;
+        final var list = DataFunctions.getObject(data);
+        for (var elem : list) {
+            if (StringUtilities.contains(elem.getText(), text)) {
+                return elem;
             }
         }
 
-        return object;
+        return SeleniumCoreConstants.STOCK_ELEMENT;
     }
 
     public static final GetElementByData<String, WebElement, WebElementList> BY_CONTAINED_TEXT_CONSTANTS = new GetElementByData<>(

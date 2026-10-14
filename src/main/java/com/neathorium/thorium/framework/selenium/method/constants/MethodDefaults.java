@@ -1,5 +1,7 @@
-package com.neathorium.thorium.framework.selenium.constants;
+package com.neathorium.thorium.framework.selenium.method.constants;
 
+import com.neathorium.thorium.framework.selenium.constants.ElementMethodNameConstants;
+import com.neathorium.thorium.framework.selenium.constants.SeleniumCoreConstants;
 import com.neathorium.thorium.framework.selenium.namespaces.validators.SeleniumTypeMethods;
 import com.neathorium.thorium.core.namespaces.validators.TypeMethod;
 import com.neathorium.thorium.framework.selenium.repositories.method.records.MethodParametersData;
